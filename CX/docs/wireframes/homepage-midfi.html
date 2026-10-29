@@ -1,0 +1,2552 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cask Exchange — Homepage Mid-Fi Wireframe</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ============================================
+           WIREFRAME DESIGN SYSTEM
+           Mid-fi: real layout, placeholder content,
+           greyscale + accent colour only
+           ============================================ */
+
+        :root {
+            /* Wireframe palette */
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #222222;
+            --bg-card: #2a2a2a;
+            --bg-card-hover: #333333;
+            --bg-elevated: #303030;
+            --border: #3a3a3a;
+            --border-light: #444444;
+
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --text-muted: #707070;
+            --text-label: #888888;
+
+            --accent: #d4a44a;
+            --accent-hover: #e0b55a;
+            --accent-dim: rgba(212, 164, 74, 0.15);
+
+            --green: #4caf7a;
+            --red: #e05555;
+            --green-dim: rgba(76, 175, 122, 0.12);
+            --red-dim: rgba(224, 85, 85, 0.12);
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+
+            --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+            --font-serif: 'DM Serif Display', Georgia, serif;
+            --font-sans: 'Inter', -apple-system, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ---- WIREFRAME ANNOTATION ---- */
+        .wireframe-badge {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            background: var(--accent);
+            color: #1a1a1a;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            z-index: 1000;
+        }
+
+        .section-annotation {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            margin-bottom: 16px;
+            background: rgba(212, 164, 74, 0.08);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .section-annotation .ann-num {
+            background: var(--accent);
+            color: #1a1a1a;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        /* ---- LAYOUT ---- */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .container-wide {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        section {
+            padding: 40px 0;
+        }
+
+        /* ============================================
+           1. HEADER / NAVIGATION
+           ============================================ */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 20px;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-center {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 8px 16px;
+            gap: 8px;
+            width: 400px;
+            cursor: text;
+        }
+
+        .search-bar .search-icon {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .search-bar .search-text {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            transition: all 0.15s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }
+
+        .nav-links a.active {
+            color: var(--accent);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--accent-dim);
+            border: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent);
+            cursor: pointer;
+        }
+
+        /* ============================================
+           2. PORTFOLIO OVERVIEW BAR
+           ============================================ */
+        .portfolio-bar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .portfolio-welcome {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .portfolio-welcome .greeting {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .portfolio-welcome .sub {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .portfolio-stat {
+            display: flex;
+            flex-direction: column;
+            padding-left: 24px;
+            border-left: 1px solid var(--border);
+        }
+
+        .portfolio-stat .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .portfolio-stat .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 2px;
+        }
+
+        .portfolio-stat .stat-change {
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .portfolio-stat .stat-change.up {
+            color: var(--green);
+        }
+
+        .portfolio-stat .stat-change.down {
+            color: var(--red);
+        }
+
+        .portfolio-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+
+        .portfolio-link:hover {
+            background: var(--accent);
+            color: #1a1a1a;
+        }
+
+        /* ============================================
+           3. QUICK FILTERS / CLASSIFICATION LINKS
+           ============================================ */
+        .quick-filters {
+            padding: 32px 0 24px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .view-all {
+            font-size: 13px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .filter-pills {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .filter-pill:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .filter-pill-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .filter-pill-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-pill-text .pill-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .filter-pill-text .pill-count {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ---- Distillery row ---- */
+        .distillery-scroll {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+        }
+
+        .distillery-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .distillery-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px 8px 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .distillery-chip:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .distillery-chip-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .distillery-chip-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .distillery-chip-count {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: -6px;
+        }
+
+
+        /* ============================================
+           4. MARKET STATS BAR
+           ============================================ */
+        .market-stats-bar {
+            padding: 20px 0;
+        }
+
+        .stats-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-item .stat-num {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-item .stat-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-weight: 600;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 36px;
+            background: var(--border);
+        }
+
+        /* ============================================
+           5. CURATED LISTS (Carousels)
+           ============================================ */
+        .carousel-section {
+            padding: 32px 0;
+        }
+
+        .section-header-left {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .section-badge {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        .carousel-wrapper {
+            position: relative;
+        }
+
+        .carousel-track {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .carousel-nav {
+            display: flex;
+            gap: 6px;
+        }
+
+        .carousel-arrow {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* ============================================
+           CASK CARD — ENRICHED
+           ============================================ */
+        .cask-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cask-card:hover {
+            border-color: var(--border-light);
+            box-shadow: var(--shadow-elevated);
+            transform: translateY(-2px);
+        }
+
+        .card-image {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-image-placeholder {
+            font-size: 48px;
+            opacity: 0.3;
+        }
+
+        .card-badges {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .card-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .card-badge.classification {
+            background: rgba(0, 0, 0, 0.6);
+            color: var(--text-primary);
+            backdrop-filter: blur(4px);
+        }
+
+        .card-badge.region {
+            background: rgba(212, 164, 74, 0.2);
+            color: var(--accent);
+            backdrop-filter: blur(4px);
+        }
+
+        .card-variants-count {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.6);
+            color: var(--text-secondary);
+            backdrop-filter: blur(4px);
+        }
+
+        .card-body {
+            padding: 14px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-distillery {
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 4px;
+        }
+
+        .card-name {
+            font-family: var(--font-serif);
+            font-size: 16px;
+            color: var(--text-primary);
+            line-height: 1.3;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .card-spec {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-spec .spec-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+        }
+
+        .card-spec .spec-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 1px;
+        }
+
+        .card-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 0 0 10px;
+        }
+
+        .card-pricing {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: auto;
+        }
+
+        .card-price-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-price-group .price-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+        }
+
+        .card-price-group .price-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 1px;
+        }
+
+        .card-price-group .price-value.ask {
+            color: var(--green);
+        }
+
+        .card-price-group .price-value.bid {
+            color: var(--accent);
+        }
+
+        .card-price-group .price-value.ref {
+            color: var(--text-secondary);
+        }
+
+        .card-price-group.right {
+            text-align: right;
+        }
+
+        .card-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .card-trend.up {
+            color: var(--green);
+        }
+
+        .card-trend.down {
+            color: var(--red);
+        }
+
+        /* ============================================
+           5b. FEATURED CARD (large hero card)
+           ============================================ */
+        .featured-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .featured-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .featured-card:hover {
+            border-color: var(--border-light);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .featured-image {
+            aspect-ratio: 1;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            opacity: 0.3;
+        }
+
+        .featured-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .featured-top {}
+
+        .featured-distillery {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .featured-name {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            color: var(--text-primary);
+            margin-top: 6px;
+            line-height: 1.3;
+        }
+
+        .featured-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .featured-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .featured-spec {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .featured-spec .spec-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+        }
+
+        .featured-spec .spec-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .featured-pricing {
+            display: flex;
+            gap: 24px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .featured-cta {
+            margin-top: 16px;
+            padding: 10px 20px;
+            background: var(--accent);
+            color: #1a1a1a;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            align-self: flex-start;
+        }
+
+        /* ============================================
+           6. ACTIVE TRADING / MARKET ACTIVITY
+           ============================================ */
+        .market-activity {
+            padding: 40px 0;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+        }
+
+        .chart-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .chart-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 2px;
+            background: var(--bg-elevated);
+            border-radius: var(--radius-sm);
+            padding: 2px;
+        }
+
+        .chart-tab {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .chart-tab.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 220px;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 40px,
+                    var(--border) 40px,
+                    var(--border) 41px);
+            border-radius: var(--radius-sm);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-line {
+            position: absolute;
+            inset: 20px;
+            overflow: hidden;
+        }
+
+        .chart-line svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .recent-trades-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .trade-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .trade-row {
+            display: grid;
+            grid-template-columns: auto 1fr auto auto;
+            gap: 12px;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .trade-row:last-child {
+            border-bottom: none;
+        }
+
+        .trade-type {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.3px;
+        }
+
+        .trade-type.buy {
+            background: var(--green-dim);
+            color: var(--green);
+        }
+
+        .trade-type.sell {
+            background: var(--red-dim);
+            color: var(--red);
+        }
+
+        .trade-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .trade-price {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .trade-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* ============================================
+           7. HOW IT WORKS
+           ============================================ */
+        .how-it-works {
+            padding: 48px 0;
+        }
+
+        .steps-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 24px 16px;
+            position: relative;
+        }
+
+        .step-num {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--accent-dim);
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 auto 16px;
+        }
+
+        .step-title {
+            font-family: var(--font-serif);
+            font-size: 17px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .step-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .step-connector {
+            position: absolute;
+            top: 44px;
+            right: -12px;
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        /* ============================================
+           8. TRUST BAR (ELEVATED)
+           ============================================ */
+        .trust-bar {
+            padding: 16px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .trust-items {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .trust-icon {
+            font-size: 16px;
+            color: var(--accent);
+        }
+
+        /* ============================================
+           9. FOOTER
+           ============================================ */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 48px 0 24px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 32px;
+        }
+
+        .footer-brand .footer-logo {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .footer-brand .footer-logo span {
+            color: var(--accent);
+        }
+
+        .footer-brand .footer-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .footer-col h4 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .footer-col a {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 4px 0;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .footer-bottom .copy {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .footer-bottom .legal-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .footer-bottom .legal-links a {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        /* ============================================
+           TOP DISTILLERIES — RANKED LIST
+           ============================================ */
+        .top-distilleries-section {
+            padding: 40px 0;
+        }
+
+        .distillery-ranked-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 4px;
+        }
+
+        .distillery-ranked-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: block;
+        }
+
+        .distillery-ranked-card:hover {
+            border-color: var(--border-light);
+            box-shadow: var(--shadow-elevated);
+            transform: translateY(-1px);
+        }
+
+        /* distillery-info row */
+        .distillery-info-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 16px 12px;
+            position: relative;
+        }
+
+        .distillery-rank-badge {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #1a1a1a;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .distillery-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .distillery-info-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .distillery-info-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .distillery-info-casks {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* distillery-market-data row */
+        .distillery-market-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            padding: 0 16px 16px;
+            border-top: 1px solid var(--border);
+            margin-top: 4px;
+            padding-top: 12px;
+        }
+
+        .distillery-metric {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .distillery-metric-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .distillery-metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .distillery-metric-delta {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .distillery-metric-delta.up {
+            color: var(--green);
+        }
+
+        .distillery-metric-delta.down {
+            color: var(--red);
+        }
+
+        .distillery-metric-delta.neutral {
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+           UTILITY
+           ============================================ */
+        .mt-8 {
+            margin-top: 8px;
+        }
+
+        .mt-16 {
+            margin-top: 16px;
+        }
+
+        .mt-24 {
+            margin-top: 24px;
+        }
+
+        .gap-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wireframe-badge">Mid-Fi Wireframe v1.0</div>
+
+    <!-- ============================================
+     SECTION 1: HEADER / NAVIGATION
+     ============================================ -->
+    <header>
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">1</span> Header — Persistent navigation with search,
+                quick links, and profile</div>
+            <div class="header-inner">
+                <a href="#" class="logo">CASK <span>EXCHANGE</span></a>
+
+                <div class="nav-center">
+                    <div class="search-bar">
+                        <span class="search-icon">🔍</span>
+                        <span class="search-text">Search casks, distilleries, regions...</span>
+                    </div>
+                    <nav class="nav-links">
+                        <a href="#" class="active">Home</a>
+                        <a href="#">Marketplace</a>
+                        <a href="#">Distilleries</a>
+                        <a href="#">How It Works</a>
+                    </nav>
+                </div>
+
+                <div class="nav-right">
+                    <div class="nav-icon-btn" title="Notifications">🔔</div>
+                    <div class="avatar">MC</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================
+     SECTION 2: PORTFOLIO OVERVIEW BAR
+     ============================================ -->
+    <div class="portfolio-bar">
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">2</span> Portfolio Snapshot — Authenticated users see
+                a summary of holdings and open orders</div>
+            <div class="portfolio-grid">
+                <div class="portfolio-welcome">
+                    <div class="greeting">Welcome back, Marcus</div>
+                    <div class="sub">Last login: 12 Apr 2026, 09:14 AM</div>
+                </div>
+                <div class="portfolio-stat">
+                    <span class="stat-label">Portfolio Value</span>
+                    <span class="stat-value">£124,500</span>
+                    <span class="stat-change up">▲ +3.2% (30d)</span>
+                </div>
+                <div class="portfolio-stat">
+                    <span class="stat-label">Casks Owned</span>
+                    <span class="stat-value">4</span>
+                    <span class="stat-change" style="color:var(--text-muted)">2 distilleries</span>
+                </div>
+                <div class="portfolio-stat">
+                    <span class="stat-label">Open Orders</span>
+                    <span class="stat-value">2</span>
+                    <span class="stat-change" style="color:var(--text-muted)">1 bid · 1 ask</span>
+                </div>
+                <a href="#" class="portfolio-link">View Portfolio →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SECTION 3: TRUST BAR (ELEVATED POSITION)
+     ============================================ -->
+    <div class="trust-bar">
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">3</span> Trust Bar — Elevated from footer to build
+                confidence early in the browse flow</div>
+            <div class="trust-items">
+                <div class="trust-item"><span class="trust-icon">✓</span> Verified Distillery Partners</div>
+                <div class="trust-item"><span class="trust-icon">🔒</span> Secure Escrow Payments</div>
+                <div class="trust-item"><span class="trust-icon">📜</span> Ownership Certificates Included</div>
+                <div class="trust-item"><span class="trust-icon">🏦</span> Bonded Warehouse Storage</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SECTION 4: QUICK FILTERS — Classification + Distillery
+     ============================================ -->
+    <section class="quick-filters">
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">4</span> Quick Filters — Classification pills link to
+                /marketplace with active filters. Distillery chips enable distillery-based discovery.</div>
+
+            <!-- Classification pills -->
+            <div class="section-header">
+                <div>
+                    <div class="section-title">Browse by Classification</div>
+                    <div class="section-subtitle">Jump to the marketplace with a category pre-selected</div>
+                </div>
+            </div>
+            <div class="filter-pills">
+                <a href="#" class="filter-pill">
+                    <div class="filter-pill-icon">🥃</div>
+                    <div class="filter-pill-text">
+                        <span class="pill-label">Single Malt Scotch</span>
+                        <span class="pill-count">84 casks listed</span>
+                    </div>
+                </a>
+                <a href="#" class="filter-pill">
+                    <div class="filter-pill-icon">🌾</div>
+                    <div class="filter-pill-text">
+                        <span class="pill-label">Single Grain</span>
+                        <span class="pill-count">23 casks listed</span>
+                    </div>
+                </a>
+                <a href="#" class="filter-pill">
+                    <div class="filter-pill-icon">🍯</div>
+                    <div class="filter-pill-text">
+                        <span class="pill-label">Blended Malt</span>
+                        <span class="pill-count">12 casks listed</span>
+                    </div>
+                </a>
+                <a href="#" class="filter-pill">
+                    <div class="filter-pill-icon">🏴</div>
+                    <div class="filter-pill-text">
+                        <span class="pill-label">Bourbon</span>
+                        <span class="pill-count">31 casks listed</span>
+                    </div>
+                </a>
+                <a href="#" class="filter-pill">
+                    <div class="filter-pill-icon">🍷</div>
+                    <div class="filter-pill-text">
+                        <span class="pill-label">Irish Whiskey</span>
+                        <span class="pill-count">18 casks listed</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Distillery shortcuts -->
+            <div class="section-header mt-24">
+                <div>
+                    <div class="section-title">Popular Distilleries</div>
+                </div>
+                <a href="#" class="view-all">All Distilleries →</a>
+            </div>
+            <div class="distillery-scroll">
+                <a href="#" class="distillery-chip">
+                    <div class="distillery-chip-img">GP</div>
+                    <span class="distillery-chip-name">Glenfarclas</span>
+                    <span class="distillery-chip-count">· 8</span>
+                </a>
+                <a href="#" class="distillery-chip">
+                    <div class="distillery-chip-img">TB</div>
+                    <span class="distillery-chip-name">Tullibardine</span>
+                    <span class="distillery-chip-count">· 12</span>
+                </a>
+                <a href="#" class="distillery-chip">
+                    <div class="distillery-chip-img">LP</div>
+                    <span class="distillery-chip-name">Laphroaig</span>
+                    <span class="distillery-chip-count">· 15</span>
+                </a>
+                <a href="#" class="distillery-chip">
+                    <div class="distillery-chip-img">GG</div>
+                    <span class="distillery-chip-name">Glengoyne</span>
+                    <span class="distillery-chip-count">· 6</span>
+                </a>
+                <a href="#" class="distillery-chip">
+                    <div class="distillery-chip-img">CR</div>
+                    <span class="distillery-chip-name">Craigellachie</span>
+                    <span class="distillery-chip-count">· 9</span>
+                </a>
+                <a href="#" class="distillery-chip">
+                    <div class="distillery-chip-img">OP</div>
+                    <span class="distillery-chip-name">Old Pulteney</span>
+                    <span class="distillery-chip-count">· 4</span>
+                </a>
+                <a href="#" class="distillery-chip">
+                    <div class="distillery-chip-img">BE</div>
+                    <span class="distillery-chip-name">The Balvenie</span>
+                    <span class="distillery-chip-count">· 7</span>
+                </a>
+                <a href="#" class="distillery-chip">
+                    <div class="distillery-chip-img">HP</div>
+                    <span class="distillery-chip-name">Highland Park</span>
+                    <span class="distillery-chip-count">· 11</span>
+                </a>
+                <a href="#" class="distillery-chip">
+                    <div class="distillery-chip-img">AD</div>
+                    <span class="distillery-chip-name">Ardbeg</span>
+                    <span class="distillery-chip-count">· 5</span>
+                </a>
+                <a href="#" class="distillery-chip">
+                    <div class="distillery-chip-img">DY</div>
+                    <span class="distillery-chip-name">Dalrymple</span>
+                    <span class="distillery-chip-count">· 3</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+     SECTION 5: MARKET STATS BAR
+     ============================================ -->
+    <div class="market-stats-bar">
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">5</span> Market Snapshot — Aggregate platform stats to
+                signal liquidity and activity</div>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <span class="stat-num">247</span>
+                    <span class="stat-desc">Listed Casks</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-num">19</span>
+                    <span class="stat-desc">Distilleries</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-num">£2.4M</span>
+                    <span class="stat-desc">Total Value Traded</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-num">38</span>
+                    <span class="stat-desc">Trades This Month</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-num">1,240</span>
+                    <span class="stat-desc">Registered Investors</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SECTION 6a: CURATED LIST — High Interest Casks
+     (featured layout with hero card)
+     ============================================ -->
+    <section class="carousel-section">
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">6</span> Curated List — "High Interest Casks" with a
+                featured hero card + 2 standard cards. Visual hierarchy differentiates from other sections.</div>
+            <div class="section-header">
+                <div class="section-header-left">
+                    <div class="section-title">High Interest Casks</div>
+                    <span class="section-badge">🔥 Most Watched</span>
+                </div>
+                <div class="gap-row">
+                    <a href="#" class="view-all">View All →</a>
+                    <div class="carousel-nav">
+                        <div class="carousel-arrow">‹</div>
+                        <div class="carousel-arrow">›</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="featured-row">
+                <!-- Featured (Hero) Card -->
+                <div class="featured-card">
+                    <div class="featured-image">🛢️</div>
+                    <div class="featured-body">
+                        <div class="featured-top">
+                            <div class="featured-distillery">Laphroaig · Highland</div>
+                            <div class="featured-name">Laphroaig 10 Years First-Fill Tube</div>
+                            <div class="featured-meta">Single Malt Scotch · Ex-Bourbon Hogshead · Vintage 2016</div>
+                            <div class="featured-specs">
+                                <div class="featured-spec">
+                                    <span class="spec-label">Age</span>
+                                    <span class="spec-value">10 yrs</span>
+                                </div>
+                                <div class="featured-spec">
+                                    <span class="spec-label">ABV</span>
+                                    <span class="spec-value">63.5%</span>
+                                </div>
+                                <div class="featured-spec">
+                                    <span class="spec-label">RLA</span>
+                                    <span class="spec-value">142 L</span>
+                                </div>
+                                <div class="featured-spec">
+                                    <span class="spec-label">Est. Bottles</span>
+                                    <span class="spec-value">~198</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="featured-pricing">
+                                <div class="card-price-group">
+                                    <span class="price-label">Lowest Ask</span>
+                                    <span class="price-value ask">£45,700</span>
+                                </div>
+                                <div class="card-price-group">
+                                    <span class="price-label">Highest Bid</span>
+                                    <span class="price-value bid">£42,100</span>
+                                </div>
+                                <div class="card-price-group">
+                                    <span class="price-label">Last Trade</span>
+                                    <span class="price-value">£43,800</span>
+                                    <div class="card-trend up">▲ +5.2%</div>
+                                </div>
+                            </div>
+                            <button class="featured-cta">View Cask Details →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stacked standard cards -->
+                <div style="display:flex;flex-direction:column;gap:16px;">
+                    <!-- Card 1 -->
+                    <div class="cask-card" style="flex:1;">
+                        <div class="card-image">
+                            <span class="card-image-placeholder">🛢️</span>
+                            <div class="card-badges">
+                                <span class="card-badge classification">Single Malt</span>
+                                <span class="card-badge region">Highland</span>
+                            </div>
+                            <span class="card-variants-count">3 variants</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-distillery">Glenfarclas</div>
+                            <div class="card-name">Glenfarclas 15 Year Anniversary Edition</div>
+                            <div class="card-specs">
+                                <div class="card-spec">
+                                    <span class="spec-label">Age</span>
+                                    <span class="spec-value">15 yrs</span>
+                                </div>
+                                <div class="card-spec">
+                                    <span class="spec-label">ABV</span>
+                                    <span class="spec-value">61.2%</span>
+                                </div>
+                                <div class="card-spec">
+                                    <span class="spec-label">Cask Type</span>
+                                    <span class="spec-value">Sherry Butt</span>
+                                </div>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-pricing">
+                                <div class="card-price-group">
+                                    <span class="price-label">Lowest Ask</span>
+                                    <span class="price-value ask">£38,200</span>
+                                </div>
+                                <div class="card-price-group right">
+                                    <span class="price-label">Highest Bid</span>
+                                    <span class="price-value bid">£35,600</span>
+                                    <div class="card-trend up">▲ +2.8%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="cask-card" style="flex:1;">
+                        <div class="card-image">
+                            <span class="card-image-placeholder">🛢️</span>
+                            <div class="card-badges">
+                                <span class="card-badge classification">Single Malt</span>
+                                <span class="card-badge region">Islay</span>
+                            </div>
+                            <span class="card-variants-count">1 variant</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-distillery">Ardbeg</div>
+                            <div class="card-name">Ardbeg 18Y Fino Sherry Hogshead</div>
+                            <div class="card-specs">
+                                <div class="card-spec">
+                                    <span class="spec-label">Age</span>
+                                    <span class="spec-value">18 yrs</span>
+                                </div>
+                                <div class="card-spec">
+                                    <span class="spec-label">ABV</span>
+                                    <span class="spec-value">55.8%</span>
+                                </div>
+                                <div class="card-spec">
+                                    <span class="spec-label">Cask Type</span>
+                                    <span class="spec-value">Sherry Hogs.</span>
+                                </div>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-pricing">
+                                <div class="card-price-group">
+                                    <span class="price-label">Expected Value</span>
+                                    <span class="price-value ref">From £52,000</span>
+                                </div>
+                                <div class="card-price-group right">
+                                    <span class="price-label">Highest Bid</span>
+                                    <span class="price-value bid">£49,300</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+     SECTION 6b: CURATED LIST — Strategic Buys
+     (Standard 4-col grid)
+     ============================================ -->
+    <section class="carousel-section">
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">7</span> Curated List — "Strategic Buys" in standard
+                4-column grid. Cards show enriched data: classification badges, cask specs, dual pricing + trend.</div>
+            <div class="section-header">
+                <div class="section-header-left">
+                    <div class="section-title">Strategic Buys</div>
+                    <span class="section-badge">💡 Competitive Prices</span>
+                </div>
+                <div class="gap-row">
+                    <a href="#" class="view-all">View All →</a>
+                    <div class="carousel-nav">
+                        <div class="carousel-arrow">‹</div>
+                        <div class="carousel-arrow">›</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-track">
+                <!-- Card A -->
+                <div class="cask-card">
+                    <div class="card-image">
+                        <span class="card-image-placeholder">🛢️</span>
+                        <div class="card-badges">
+                            <span class="card-badge classification">Single Malt</span>
+                            <span class="card-badge region">Speyside</span>
+                        </div>
+                        <span class="card-variants-count">2 variants</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-distillery">Dalrymple</div>
+                        <div class="card-name">Dalrymple 2015 Ex-Bourbon Barrel</div>
+                        <div class="card-specs">
+                            <div class="card-spec">
+                                <span class="spec-label">Age</span>
+                                <span class="spec-value">11 yrs</span>
+                            </div>
+                            <div class="card-spec">
+                                <span class="spec-label">ABV</span>
+                                <span class="spec-value">66.3%</span>
+                            </div>
+                            <div class="card-spec">
+                                <span class="spec-label">RLA</span>
+                                <span class="spec-value">158 L</span>
+                            </div>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-pricing">
+                            <div class="card-price-group">
+                                <span class="price-label">Lowest Ask</span>
+                                <span class="price-value ask">£14,200</span>
+                            </div>
+                            <div class="card-price-group right">
+                                <span class="price-label">Highest Bid</span>
+                                <span class="price-value bid">£12,800</span>
+                                <div class="card-trend down">▼ -1.3%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card B -->
+                <div class="cask-card">
+                    <div class="card-image">
+                        <span class="card-image-placeholder">🛢️</span>
+                        <div class="card-badges">
+                            <span class="card-badge classification">Single Malt</span>
+                            <span class="card-badge region">Highland</span>
+                        </div>
+                        <span class="card-variants-count">1 variant</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-distillery">Old Pulteney</div>
+                        <div class="card-name">Old Pulteney 2013 Cask #502753</div>
+                        <div class="card-specs">
+                            <div class="card-spec">
+                                <span class="spec-label">Age</span>
+                                <span class="spec-value">13 yrs</span>
+                            </div>
+                            <div class="card-spec">
+                                <span class="spec-label">ABV</span>
+                                <span class="spec-value">68.4%</span>
+                            </div>
+                            <div class="card-spec">
+                                <span class="spec-label">OLA</span>
+                                <span class="spec-value">150 L</span>
+                            </div>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-pricing">
+                            <div class="card-price-group">
+                                <span class="price-label">Expected Value</span>
+                                <span class="price-value ref">From £10,000</span>
+                            </div>
+                            <div class="card-price-group right">
+                                <span class="price-label">Ref. Max</span>
+                                <span class="price-value" style="color:var(--text-secondary);">£18,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card C -->
+                <div class="cask-card">
+                    <div class="card-image">
+                        <span class="card-image-placeholder">🛢️</span>
+                        <div class="card-badges">
+                            <span class="card-badge classification">Single Malt</span>
+                            <span class="card-badge region">Islay</span>
+                        </div>
+                        <span class="card-variants-count">4 variants</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-distillery">Highland Park</div>
+                        <div class="card-name">Highland Park 12Y Viking Honour</div>
+                        <div class="card-specs">
+                            <div class="card-spec">
+                                <span class="spec-label">Age</span>
+                                <span class="spec-value">12 yrs</span>
+                            </div>
+                            <div class="card-spec">
+                                <span class="spec-label">ABV</span>
+                                <span class="spec-value">59.1%</span>
+                            </div>
+                            <div class="card-spec">
+                                <span class="spec-label">RLA</span>
+                                <span class="spec-value">210 L</span>
+                            </div>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-pricing">
+                            <div class="card-price-group">
+                                <span class="price-label">Lowest Ask</span>
+                                <span class="price-value ask">£45,700</span>
+                            </div>
+                            <div class="card-price-group right">
+                                <span class="price-label">Highest Bid</span>
+                                <span class="price-value bid">£43,200</span>
+                                <div class="card-trend up">▲ +4.1%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card D -->
+                <div class="cask-card">
+                    <div class="card-image">
+                        <span class="card-image-placeholder">🛢️</span>
+                        <div class="card-badges">
+                            <span class="card-badge classification">Single Grain</span>
+                            <span class="card-badge region">Lowland</span>
+                        </div>
+                        <span class="card-variants-count">2 variants</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-distillery">Laphroaig</div>
+                        <div class="card-name">Laphroaig 10 Years First-Fill Tube</div>
+                        <div class="card-specs">
+                            <div class="card-spec">
+                                <span class="spec-label">Age</span>
+                                <span class="spec-value">10 yrs</span>
+                            </div>
+                            <div class="card-spec">
+                                <span class="spec-label">ABV</span>
+                                <span class="spec-value">63.5%</span>
+                            </div>
+                            <div class="card-spec">
+                                <span class="spec-label">RLA</span>
+                                <span class="spec-value">142 L</span>
+                            </div>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-pricing">
+                            <div class="card-price-group">
+                                <span class="price-label">Lowest Ask</span>
+                                <span class="price-value ask">£28,500</span>
+                            </div>
+                            <div class="card-price-group right">
+                                <span class="price-label">Highest Bid</span>
+                                <span class="price-value bid">£26,000</span>
+                                <div class="card-trend up">▲ +1.9%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+     SECTION 6c: CURATED LIST — In High Demand
+     ============================================ -->
+    <section class="carousel-section">
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">8</span> Curated List — "In High Demand" — Same
+                enriched card component, different curation logic (most bids placed).</div>
+            <div class="section-header">
+                <div class="section-header-left">
+                    <div class="section-title">In High Demand</div>
+                    <span class="section-badge">📈 Most Active Bidding</span>
+                </div>
+                <div class="gap-row">
+                    <a href="#" class="view-all">View All →</a>
+                    <div class="carousel-nav">
+                        <div class="carousel-arrow">‹</div>
+                        <div class="carousel-arrow">›</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-track">
+                <div class="cask-card">
+                    <div class="card-image">
+                        <span class="card-image-placeholder">🛢️</span>
+                        <div class="card-badges"><span class="card-badge classification">Single Malt</span><span
+                                class="card-badge region">Speyside</span></div>
+                        <span class="card-variants-count">5 variants</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-distillery">Tullibardine</div>
+                        <div class="card-name">Tullibardine 8Y Oloroso Sherry</div>
+                        <div class="card-specs">
+                            <div class="card-spec"><span class="spec-label">Age</span><span class="spec-value">8
+                                    yrs</span></div>
+                            <div class="card-spec"><span class="spec-label">ABV</span><span
+                                    class="spec-value">64.7%</span></div>
+                            <div class="card-spec"><span class="spec-label">RLA</span><span class="spec-value">195
+                                    L</span></div>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-pricing">
+                            <div class="card-price-group"><span class="price-label">Lowest Ask</span><span
+                                    class="price-value ask">£22,400</span></div>
+                            <div class="card-price-group right"><span class="price-label">Highest Bid</span><span
+                                    class="price-value bid">£21,100</span>
+                                <div class="card-trend up">▲ +6.4%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cask-card">
+                    <div class="card-image">
+                        <span class="card-image-placeholder">🛢️</span>
+                        <div class="card-badges"><span class="card-badge classification">Single Malt</span><span
+                                class="card-badge region">Highland</span></div>
+                        <span class="card-variants-count">2 variants</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-distillery">Glengoyne</div>
+                        <div class="card-name">Glengoyne 20Y Pedro Ximénez</div>
+                        <div class="card-specs">
+                            <div class="card-spec"><span class="spec-label">Age</span><span class="spec-value">20
+                                    yrs</span></div>
+                            <div class="card-spec"><span class="spec-label">ABV</span><span
+                                    class="spec-value">52.3%</span></div>
+                            <div class="card-spec"><span class="spec-label">RLA</span><span class="spec-value">118
+                                    L</span></div>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-pricing">
+                            <div class="card-price-group"><span class="price-label">Lowest Ask</span><span
+                                    class="price-value ask">£68,900</span></div>
+                            <div class="card-price-group right"><span class="price-label">Highest Bid</span><span
+                                    class="price-value bid">£65,000</span>
+                                <div class="card-trend up">▲ +3.7%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cask-card">
+                    <div class="card-image">
+                        <span class="card-image-placeholder">🛢️</span>
+                        <div class="card-badges"><span class="card-badge classification">Bourbon</span><span
+                                class="card-badge region">Kentucky</span></div>
+                        <span class="card-variants-count">1 variant</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-distillery">Craigellachie</div>
+                        <div class="card-name">Craigellachie 14Y Refill Hogshead</div>
+                        <div class="card-specs">
+                            <div class="card-spec"><span class="spec-label">Age</span><span class="spec-value">14
+                                    yrs</span></div>
+                            <div class="card-spec"><span class="spec-label">ABV</span><span
+                                    class="spec-value">58.9%</span></div>
+                            <div class="card-spec"><span class="spec-label">RLA</span><span class="spec-value">165
+                                    L</span></div>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-pricing">
+                            <div class="card-price-group"><span class="price-label">Lowest Ask</span><span
+                                    class="price-value ask">£31,200</span></div>
+                            <div class="card-price-group right"><span class="price-label">Highest Bid</span><span
+                                    class="price-value bid">£29,800</span>
+                                <div class="card-trend down">▼ -0.8%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cask-card">
+                    <div class="card-image">
+                        <span class="card-image-placeholder">🛢️</span>
+                        <div class="card-badges"><span class="card-badge classification">Single Malt</span><span
+                                class="card-badge region">Islay</span></div>
+                        <span class="card-variants-count">3 variants</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-distillery">Ardbeg</div>
+                        <div class="card-name">Ardbeg 12Y Corryvreckan Reserve</div>
+                        <div class="card-specs">
+                            <div class="card-spec"><span class="spec-label">Age</span><span class="spec-value">12
+                                    yrs</span></div>
+                            <div class="card-spec"><span class="spec-label">ABV</span><span
+                                    class="spec-value">57.1%</span></div>
+                            <div class="card-spec"><span class="spec-label">RLA</span><span class="spec-value">178
+                                    L</span></div>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-pricing">
+                            <div class="card-price-group"><span class="price-label">Lowest Ask</span><span
+                                    class="price-value ask">£55,300</span></div>
+                            <div class="card-price-group right"><span class="price-label">Highest Bid</span><span
+                                    class="price-value bid">£52,800</span>
+                                <div class="card-trend up">▲ +2.1%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+     SECTION 6d: TOP DISTILLERIES — Ranked by Lifetime Volume
+     ============================================ -->
+    <section class="top-distilleries-section">
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">8</span> Top Distilleries — Ranked by lifetime completed
+                transaction volume. Tie-broken by master cask count. Shows Med. Price &amp; Volume with 30D deltas.</div>
+
+            <div class="section-header">
+                <div class="section-header-left">
+                    <div class="section-title">Top Distilleries</div>
+                    <span class="section-badge">🏆 By Trading Volume</span>
+                </div>
+                <a href="#" class="view-all">View all distilleries →</a>
+            </div>
+
+            <div class="distillery-ranked-list">
+
+                <!-- Rank 1: Macallan -->
+                <a href="#" class="distillery-ranked-card" id="distillery-card-1">
+                    <div class="distillery-info-row">
+                        <div class="distillery-rank-badge" aria-label="Ranked #1">1</div>
+                        <div class="distillery-avatar" aria-label="Macallan logo">🌐</div>
+                        <div class="distillery-info-text">
+                            <span class="distillery-info-name">Macallan</span>
+                            <span class="distillery-info-casks">100 casks</span>
+                        </div>
+                    </div>
+                    <div class="distillery-market-row">
+                        <div class="distillery-metric">
+                            <span class="distillery-metric-label">Med. Price</span>
+                            <span class="distillery-metric-value">£12,000</span>
+                            <span class="distillery-metric-delta up" aria-label="Up 1.2% over 30 days">▲ +1.2% (30D)</span>
+                        </div>
+                        <div class="distillery-metric">
+                            <span class="distillery-metric-label">Volume</span>
+                            <span class="distillery-metric-value">£120,000</span>
+                            <span class="distillery-metric-delta up" aria-label="Up 3.2% over 30 days">▲ +3.2% (30D)</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Rank 2: Glenfarclas -->
+                <a href="#" class="distillery-ranked-card" id="distillery-card-2">
+                    <div class="distillery-info-row">
+                        <div class="distillery-rank-badge" aria-label="Ranked #2">2</div>
+                        <div class="distillery-avatar" aria-label="Glenfarclas logo">🌐</div>
+                        <div class="distillery-info-text">
+                            <span class="distillery-info-name">Glenfarclas</span>
+                            <span class="distillery-info-casks">84 casks</span>
+                        </div>
+                    </div>
+                    <div class="distillery-market-row">
+                        <div class="distillery-metric">
+                            <span class="distillery-metric-label">Med. Price</span>
+                            <span class="distillery-metric-value">£9,500</span>
+                            <span class="distillery-metric-delta up" aria-label="Up 2.4% over 30 days">▲ +2.4% (30D)</span>
+                        </div>
+                        <div class="distillery-metric">
+                            <span class="distillery-metric-label">Volume</span>
+                            <span class="distillery-metric-value">£98,400</span>
+                            <span class="distillery-metric-delta down" aria-label="Down 0.7% over 30 days">▼ -0.7% (30D)</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Rank 3: Laphroaig -->
+                <a href="#" class="distillery-ranked-card" id="distillery-card-3">
+                    <div class="distillery-info-row">
+                        <div class="distillery-rank-badge" aria-label="Ranked #3">3</div>
+                        <div class="distillery-avatar" aria-label="Laphroaig logo">🌐</div>
+                        <div class="distillery-info-text">
+                            <span class="distillery-info-name">Laphroaig</span>
+                            <span class="distillery-info-casks">62 casks</span>
+                        </div>
+                    </div>
+                    <div class="distillery-market-row">
+                        <div class="distillery-metric">
+                            <span class="distillery-metric-label">Med. Price</span>
+                            <span class="distillery-metric-value">£18,200</span>
+                            <span class="distillery-metric-delta up" aria-label="Up 4.1% over 30 days">▲ +4.1% (30D)</span>
+                        </div>
+                        <div class="distillery-metric">
+                            <span class="distillery-metric-label">Volume</span>
+                            <span class="distillery-metric-value">£76,800</span>
+                            <span class="distillery-metric-delta up" aria-label="Up 1.9% over 30 days">▲ +1.9% (30D)</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Rank 4: Ardbeg -->
+                <a href="#" class="distillery-ranked-card" id="distillery-card-4">
+                    <div class="distillery-info-row">
+                        <div class="distillery-rank-badge" aria-label="Ranked #4">4</div>
+                        <div class="distillery-avatar" aria-label="Ardbeg logo">🌐</div>
+                        <div class="distillery-info-text">
+                            <span class="distillery-info-name">Ardbeg</span>
+                            <span class="distillery-info-casks">45 casks</span>
+                        </div>
+                    </div>
+                    <div class="distillery-market-row">
+                        <div class="distillery-metric">
+                            <span class="distillery-metric-label">Med. Price</span>
+                            <span class="distillery-metric-value">£24,600</span>
+                            <span class="distillery-metric-delta neutral" aria-label="No change over 30 days">— (30D)</span>
+                        </div>
+                        <div class="distillery-metric">
+                            <span class="distillery-metric-label">Volume</span>
+                            <span class="distillery-metric-value">£54,200</span>
+                            <span class="distillery-metric-delta up" aria-label="Up 6.3% over 30 days">▲ +6.3% (30D)</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Rank 5: Highland Park -->
+                <a href="#" class="distillery-ranked-card" id="distillery-card-5">
+                    <div class="distillery-info-row">
+                        <div class="distillery-rank-badge" aria-label="Ranked #5">5</div>
+                        <div class="distillery-avatar" aria-label="Highland Park logo">🌐</div>
+                        <div class="distillery-info-text">
+                            <span class="distillery-info-name">Highland Park</span>
+                            <span class="distillery-info-casks">38 casks</span>
+                        </div>
+                    </div>
+                    <div class="distillery-market-row">
+                        <div class="distillery-metric">
+                            <span class="distillery-metric-label">Med. Price</span>
+                            <span class="distillery-metric-value">£15,800</span>
+                            <span class="distillery-metric-delta down" aria-label="Down 1.5% over 30 days">▼ -1.5% (30D)</span>
+                        </div>
+                        <div class="distillery-metric">
+                            <span class="distillery-metric-label">Volume</span>
+                            <span class="distillery-metric-value">£48,900</span>
+                            <span class="distillery-metric-delta up" aria-label="Up 0.9% over 30 days">▲ +0.9% (30D)</span>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+     SECTION 7: MARKET ACTIVITY
+     ============================================ -->
+    <section class="market-activity">
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">9</span> Market Activity — Price trend chart + recent
+                trades feed. Serves Catherine's need for market data and builds liquidity confidence for Marcus.</div>
+            <div class="section-header">
+                <div class="section-title">Market Activity</div>
+            </div>
+
+            <div class="activity-grid">
+                <!-- Chart panel -->
+                <div class="chart-panel">
+                    <div class="chart-header">
+                        <div class="chart-title">Average Cask Value — Platform Index</div>
+                        <div class="chart-tabs">
+                            <div class="chart-tab">7D</div>
+                            <div class="chart-tab active">1M</div>
+                            <div class="chart-tab">3M</div>
+                            <div class="chart-tab">1Y</div>
+                            <div class="chart-tab">All</div>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div class="chart-line">
+                            <svg viewBox="0 0 600 180" preserveAspectRatio="none">
+                                <polyline
+                                    points="0,140 40,130 80,135 120,110 160,115 200,90 240,95 280,80 320,85 360,60 400,65 440,50 480,55 520,40 560,35 600,25"
+                                    fill="none" stroke="#d4a44a" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#d4a44a" stop-opacity="0.3" />
+                                    <stop offset="100%" stop-color="#d4a44a" stop-opacity="0.02" />
+                                </linearGradient>
+                                <polygon
+                                    points="0,140 40,130 80,135 120,110 160,115 200,90 240,95 280,80 320,85 360,60 400,65 440,50 480,55 520,40 560,35 600,25 600,180 0,180"
+                                    fill="url(#chartGrad)" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent trades feed -->
+                <div class="recent-trades-panel">
+                    <div class="chart-header">
+                        <div class="chart-title">Recent Trades</div>
+                        <a href="#" class="view-all">All Trades →</a>
+                    </div>
+                    <div class="trade-list">
+                        <div class="trade-row">
+                            <span class="trade-type buy">BUY</span>
+                            <span class="trade-name">Laphroaig 10Y First-Fill</span>
+                            <span class="trade-price">£45,700</span>
+                            <span class="trade-time">2h ago</span>
+                        </div>
+                        <div class="trade-row">
+                            <span class="trade-type sell">SELL</span>
+                            <span class="trade-name">Glenfarclas 15Y Anniversary</span>
+                            <span class="trade-price">£37,800</span>
+                            <span class="trade-time">5h ago</span>
+                        </div>
+                        <div class="trade-row">
+                            <span class="trade-type buy">BUY</span>
+                            <span class="trade-name">Highland Park 12Y Viking</span>
+                            <span class="trade-price">£44,200</span>
+                            <span class="trade-time">8h ago</span>
+                        </div>
+                        <div class="trade-row">
+                            <span class="trade-type buy">BUY</span>
+                            <span class="trade-name">Tullibardine 8Y Oloroso</span>
+                            <span class="trade-price">£21,900</span>
+                            <span class="trade-time">1d ago</span>
+                        </div>
+                        <div class="trade-row">
+                            <span class="trade-type sell">SELL</span>
+                            <span class="trade-name">Ardbeg 18Y Fino Sherry</span>
+                            <span class="trade-price">£51,200</span>
+                            <span class="trade-time">1d ago</span>
+                        </div>
+                        <div class="trade-row">
+                            <span class="trade-type buy">BUY</span>
+                            <span class="trade-name">Dalrymple 2015 Ex-Bourbon</span>
+                            <span class="trade-price">£13,800</span>
+                            <span class="trade-time">2d ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+     SECTION 8: RECENTLY VIEWED
+     ============================================ -->
+    <section class="carousel-section">
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">10</span> Recently Viewed — Personalised
+                re-engagement. Only shown when view history exists.</div>
+            <div class="section-header">
+                <div class="section-header-left">
+                    <div class="section-title">Recently Viewed</div>
+                </div>
+                <div class="carousel-nav">
+                    <div class="carousel-arrow">‹</div>
+                    <div class="carousel-arrow">›</div>
+                </div>
+            </div>
+
+            <div class="carousel-track">
+                <div class="cask-card">
+                    <div class="card-image"><span class="card-image-placeholder">🛢️</span>
+                        <div class="card-badges"><span class="card-badge classification">Single Malt</span></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-distillery">Old Pulteney</div>
+                        <div class="card-name">Old Pulteney 2013 Cask #502753</div>
+                        <div class="card-specs">
+                            <div class="card-spec"><span class="spec-label">Age</span><span class="spec-value">13
+                                    yrs</span></div>
+                            <div class="card-spec"><span class="spec-label">ABV</span><span
+                                    class="spec-value">68.4%</span></div>
+                            <div class="card-spec"><span class="spec-label">OLA</span><span class="spec-value">150
+                                    L</span></div>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-pricing">
+                            <div class="card-price-group"><span class="price-label">Expected Value</span><span
+                                    class="price-value ref">From £10,000</span></div>
+                            <div class="card-price-group right"><span class="price-label">Ref. Max</span><span
+                                    class="price-value" style="color:var(--text-secondary);">£18,000</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cask-card">
+                    <div class="card-image"><span class="card-image-placeholder">🛢️</span>
+                        <div class="card-badges"><span class="card-badge classification">Single Malt</span></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-distillery">Laphroaig</div>
+                        <div class="card-name">Laphroaig 10Y First-Fill Tube</div>
+                        <div class="card-specs">
+                            <div class="card-spec"><span class="spec-label">Age</span><span class="spec-value">10
+                                    yrs</span></div>
+                            <div class="card-spec"><span class="spec-label">ABV</span><span
+                                    class="spec-value">63.5%</span></div>
+                            <div class="card-spec"><span class="spec-label">RLA</span><span class="spec-value">142
+                                    L</span></div>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-pricing">
+                            <div class="card-price-group"><span class="price-label">Lowest Ask</span><span
+                                    class="price-value ask">£45,700</span></div>
+                            <div class="card-price-group right"><span class="price-label">Highest Bid</span><span
+                                    class="price-value bid">£42,100</span>
+                                <div class="card-trend up">▲ +5.2%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cask-card">
+                    <div class="card-image"><span class="card-image-placeholder">🛢️</span>
+                        <div class="card-badges"><span class="card-badge classification">Single Grain</span></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-distillery">Craigellachie</div>
+                        <div class="card-name">Craigellachie 14Y Refill Hogshead</div>
+                        <div class="card-specs">
+                            <div class="card-spec"><span class="spec-label">Age</span><span class="spec-value">14
+                                    yrs</span></div>
+                            <div class="card-spec"><span class="spec-label">ABV</span><span
+                                    class="spec-value">58.9%</span></div>
+                            <div class="card-spec"><span class="spec-label">RLA</span><span class="spec-value">165
+                                    L</span></div>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-pricing">
+                            <div class="card-price-group"><span class="price-label">Lowest Ask</span><span
+                                    class="price-value ask">£31,200</span></div>
+                            <div class="card-price-group right"><span class="price-label">Highest Bid</span><span
+                                    class="price-value bid">£29,800</span>
+                                <div class="card-trend down">▼ -0.8%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cask-card">
+                    <div class="card-image"><span class="card-image-placeholder">🛢️</span>
+                        <div class="card-badges"><span class="card-badge classification">Single Malt</span></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-distillery">Glengoyne</div>
+                        <div class="card-name">Glengoyne 20Y Pedro Ximénez</div>
+                        <div class="card-specs">
+                            <div class="card-spec"><span class="spec-label">Age</span><span class="spec-value">20
+                                    yrs</span></div>
+                            <div class="card-spec"><span class="spec-label">ABV</span><span
+                                    class="spec-value">52.3%</span></div>
+                            <div class="card-spec"><span class="spec-label">RLA</span><span class="spec-value">118
+                                    L</span></div>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="card-pricing">
+                            <div class="card-price-group"><span class="price-label">Lowest Ask</span><span
+                                    class="price-value ask">£68,900</span></div>
+                            <div class="card-price-group right"><span class="price-label">Highest Bid</span><span
+                                    class="price-value bid">£65,000</span>
+                                <div class="card-trend up">▲ +3.7%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+     SECTION 9: HOW IT WORKS
+     ============================================ -->
+    <section class="how-it-works"
+        style="background: var(--bg-secondary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">11</span> How It Works — Educational section for
+                Marcus (Enthusiast). Explains bid/ask model in plain language with 4 digestible steps.</div>
+            <div style="text-align:center;">
+                <div class="section-title">How Cask Trading Works</div>
+                <div class="section-subtitle" style="margin-top:8px;">Buy and sell whisky casks like a marketplace — set
+                    your price, or trade instantly</div>
+            </div>
+            <div class="steps-row">
+                <div class="step-card">
+                    <div class="step-num">1</div>
+                    <div class="step-title">Browse & Discover</div>
+                    <div class="step-desc">Explore casks from verified distilleries. Filter by region, age,
+                        classification, and price range.</div>
+                    <span class="step-connector">→</span>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">2</div>
+                    <div class="step-title">Place a Bid or Buy Now</div>
+                    <div class="step-desc">Set your own price with a Bid and wait for a match — or buy instantly at the
+                        lowest available Ask price.</div>
+                    <span class="step-connector">→</span>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">3</div>
+                    <div class="step-title">Secure Ownership</div>
+                    <div class="step-desc">Once matched, payment is processed securely. Ownership certificates and bond
+                        documents are transferred to you.</div>
+                    <span class="step-connector">→</span>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">4</div>
+                    <div class="step-title">Hold or Trade</div>
+                    <div class="step-desc">Your cask matures in a bonded warehouse. Track its value over time and sell
+                        whenever you're ready.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+     SECTION 10: FOOTER
+     ============================================ -->
+    <footer>
+        <div class="container-wide">
+            <div class="section-annotation"><span class="ann-num">12</span> Footer — Standard platform footer with
+                navigation, legal, and partner badges.</div>
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">CASK <span>EXCHANGE</span></div>
+                    <div class="footer-desc">The trusted marketplace for buying and selling maturing whisky and premium
+                        spirit casks. Trade casks as investment assets with full transparency, verified provenance, and
+                        secure transactions.</div>
+                </div>
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <a href="#">Marketplace</a>
+                    <a href="#">Distilleries</a>
+                    <a href="#">How It Works</a>
+                    <a href="#">Pricing & Fees</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Account</h4>
+                    <a href="#">My Portfolio</a>
+                    <a href="#">My Orders</a>
+                    <a href="#">Transaction History</a>
+                    <a href="#">Settings</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="#">Help Centre</a>
+                    <a href="#">Contact Us</a>
+                    <a href="#">FAQs</a>
+                    <a href="#">Report an Issue</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span class="copy">© 2026 Cask Exchange. All rights reserved.</span>
+                <div class="legal-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

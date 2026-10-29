@@ -1,0 +1,243 @@
+# A. Overview
+
+This spec describes the lifecycle of a Transaction created after a Bid and an Ask are matched (Direct Match or Composite Match), through to ownership transfer.
+
+## A.1. Payment ↔ Payout Structure (Direct vs Indirect)
+
+A single Payment (buyer side) can be matched against N Payouts (seller side) — this is the Composite Match case from the Order Matching spec. The relationship branches based on total payment value:
+
+| Case | Threshold | Seller agreements | Buyer agreements |
+| :---- | :---- | :---- | :---- |
+| Direct | Total value \> £30,000 | N payouts → N seller agreements (buyer signs directly with each seller; may involve more than 1 seller) | N agreements — buyer signs one per matched payout |
+| Indirect | Total value ≤ £30,000 | N payouts → N seller agreements, but each seller signs with Cask Exchange (not directly with buyer) | 1 agreement — buyer signs once, with Cask Exchange |
+
+Aggregation rule: When 1 payment matches N payouts, the deposit step (Step 2\) only begins once all N payouts have completed Step 1 (i.e. every seller agreement is admin-signed).
+
+Cascade cancellation: If any one of the N seller agreements expires or is rejected (per Step 1's cancellation branches) → that payout is cancelled → the whole payment is cancelled → all other related payouts in the same match group are cancelled too, even if their agreements were already signed.
+
+## A.2. Session & Transaction Field Model — Direct Multi-Transaction Case
+
+### Entity structure
+
+* CheckoutSession (checkoutSessionId) — top-level container. Holds status, currentStep, and session-level mirror fields (see "Non-aggregated fields" below).
+
+* Transaction (child of session) — one per matched buy/sell pair: sellerId, askId, bidId, transactionPrice. Each transaction tracks its own signing progress independently via its own field set — no shared state between transactions in the same session.
+
+  ### Lifecycle, in order
+
+| \# | Event | Transaction-level fields | Session-level fields |
+| :---- | :---- | :---- | :---- |
+| 1 | Session created | sellerAgreementStatus \= awaiting\_signature, sellerAgreementDocuSignEnvelopeId set, sellerAgreementSignatureDueAt set | status \= pending, currentStep \= deposit\_payment |
+| 2 | Seller signs | sellerAgreementStatus: awaiting\_signature → seller\_signed, sellerAgreementSignedAt set | — |
+| 2b | Admin approves seller agreement | sellerAgreementStatus → signed, sellerAgreementAdminSignedAt \+ sellerAgreementAdminSignerId set | — |
+| 3 | Admin requests seller update | sellerAgreementStatus → update\_requested, sellerAgreementSignedAt → null, sellerAgreementDocuSignEnvelopeId changes to a new envelope. sellerAgreementSignatureDueAt does NOT change. No fields exist for who/why/when the update was requested (seller side only) | — |
+| 3b | Seller re-signs → repeats step 2 → 2b |  |  |
+| 4 | All transactions reach sellerAgreementStatus \= signed → session ready for deposit; buyer pays deposit | — | status → deposit\_paid, currentStep → agreement\_signing |
+| 4b | Deposit paid — buyer agreement fields initialize per transaction | buyerAgreementStatus \= sent, buyerAgreementSignatureDueAt set (first time) | — |
+| 5 | Buyer signs | buyerAgreementStatus: sent → buyer\_signed, buyerAgreementSignedAt set, sellerAgreementReleaseFormUrl generated for the first time (note: generated on buyer sign, not seller admin-sign, despite the field name) | — |
+| 6 | Admin requests buyer update | buyerAgreementStatus: buyer\_signed → sent (reset), buyerAgreementSignedAt → null, buyerAgreementDocuSignEnvelopeId changes, sellerAgreementReleaseFormUrl → null, buyerAgreementUpdateRequestedAt / Reason / ById set, buyerAgreementSignatureDueAt reset to request time \+ 3 days | buyerDocuSignStatus → update\_requested, same buyerAgreementUpdateRequestedAt / Reason / ById fields also set at session level |
+| 6b | Buyer re-signs | buyerAgreementStatus → buyer\_signed, buyerAgreementSignedAt set again | — |
+| 7 | Admin approves buyer agreement | buyerAgreementStatus → completed, buyerAgreementAdminSignedAt \+ buyerAgreementAdminSignerId set | — |
+| 8 | All transactions reach buyerAgreementStatus \= completed | — | status → agreement\_signed, currentStep → invoice\_payment |
+
+  ### Seller-side vs Buyer-side "update requested" — key differences
+
+|  | Seller side | Buyer side |
+| :---- | :---- | :---- |
+| Signature timestamp | Cleared to null | Cleared to null |
+| DocuSign envelope | New envelope issued | New envelope issued |
+| Signing deadline | Unchanged | Reset to request time \+ 3 days |
+| Who/why/when tracked? | No — no such fields exist | Yes — UpdateRequestedAt/Reason/ById, at both transaction and session level |
+| Release form | n/a | sellerAgreementReleaseFormUrl cleared to null |
+| Session-level status mirror | — | buyerDocuSignStatus → update\_requested |
+
+  ### Session progression: gated by the slowest transaction
+
+* Forward: session status/currentStep only advances once every transaction in the session reaches the required field state.
+
+* Regression: if any single transaction gets pulled back into update\_requested after the session already advanced past that gate, the session status regresses too — even if the other transactions in the session haven't changed. Example: both transactions reach buyerAgreementStatus \= buyer\_signed → session \= agreement\_buyer\_signed. One transaction then gets an admin update request → session drops back to deposit\_paid, even though the other transaction's fields are untouched.
+
+* If the update request happens before the session ever reached that gate, there's no regression — there's nothing to fall back from.
+
+⚠️ Non-aggregated session fields — flag for QA
+
+Two session-level fields do not aggregate (max/min) across transactions — they simply mirror whichever transaction was most recently updated:
+
+* expiryDate (session)
+
+* buyerDocuSignStatus (session)
+
+This means the session-level value can look inconsistent with the state of other transactions in the same session — e.g. if transaction A's deadline is closer than transaction B's, but B was touched more recently, the session shows B's values, not the soonest/most-conservative one.
+
+Open Question: Is this mirror-latest-touch behavior intentional, or a known gap?
+
+Reject paths still apply per-transaction in the multi-transaction session model, with the same cascade behavior confirmed in A.1: rejecting 1 transaction's agreement cancels that payout → cancels the payment → cancels all related payouts in the same session.
+
+## A.3. Indirect Multi-Transaction Case — Buyer Agreement Tracking
+
+Applies to: Composite Match, Indirect case (total value ≤ £30,000, per Section A.1) — N transactions in 1 session, but only 1 buyer agreement (buyer signs once with Cask Exchange, not once per seller).
+
+| Field | Behavior in Indirect multi-transaction case |
+| :---- | :---- |
+| buyerAgreementSignatureDueAt (transaction level) | null for every transaction. The per-transaction field from A.2 only applies to the Direct case (where buyer signs once per transaction). |
+| Buyer signing progress | Tracked at session (top-level) fields instead: buyerDocuSignEnvelopeId, buyerDocuSignStatus, buyerDocuSignSignedAt, buyerDocuSignAdminSignedAt, buyerDocuSignAdminSignerId |
+
+The transaction-level fields still exist in the schema (not removed) — they're simply left null for every transaction, same as buyerAgreementSignatureDueAt. All real buyer-side write activity happens at the session level only.
+
+In A.2, session buyerDocuSignStatus was described as mirroring whichever transaction was most recently touched (non-aggregated, since Direct has N real buyer signatures). In the Indirect case, buyerDocuSignStatus has only one write source (the single session-level buyer signature), so no mirror/aggregation ambiguity applies.
+
+# B. Transaction States
+
+| FE Status | Meaning | Entered when |  |
+| :---- | :---- | :---- | :---- |
+| Deposit Payment | Match created, waiting for seller to sign | Match executed |  |
+| Deposit Payment | Seller signed, waiting for buyer deposit | Seller signature confirmed |  |
+| Agreement Signing | Deposit paid, waiting for buyer signature | Deposit confirmed |  |
+| Invoice Payment | Buyer signed, waiting for remaining balance | Buyer signature confirmed |  |
+| Ownership Transfer | Fully paid, waiting for admin action | Final payment confirmed |  |
+| Completed | Ownership transferred | Admin confirms transfer |  |
+| Failed | Transaction terminated before completion | See Section D |  |
+
+# C. Step-by-Step Business Rules
+
+## Step 1 — Seller Signs Agreement
+
+![][image2]
+
+| Item | Detail |
+| :---- | :---- |
+| Trigger | Match executed (Direct or Composite) |
+| Actor | Seller, then Admin |
+| Signing deadline | sellerAgreementSignatureDueAt \= createdAt \+ 3 days |
+| Seller rejects | sellerAgreementRejectedAt set → status \= cancelled |
+| Seller signs | sellerAgreementSignedAt set (overwritten on re-sign) → status \= Pending Admin Review.  |
+| Deadline passes with no seller action | Status \= expired — same outcome as Payout Cancelled (match voided, order returns to waitlist) |
+| Seller cannot reject once already signed | Confirmed — no reject option once in Pending Admin Review |
+| Admin requests update | Status \= update\_requested, loops back to Pending Seller Signature.  For single-transaction cases, sellerAgreementSignatureDueAt resets to now \+ 3 days. In the multi-transaction case (session with N transactions — see A.2), sellerAgreementSignatureDueAt does NOT reset on update-request. sellerAgreementSignedAt is cleared to null, and the DocuSign envelope ID changes. No field track who requested the update or why on the seller side. |
+| If deadline passes again during update\_requested | Same Payout Expired outcome (retry deadline is treated the same as the original) |
+| Admin rejects | sellerAgreementAdminRejectedAt set → that payout cancelled → cascades: payment cancelled → all related payouts in the same match group cancelled too (confirmed, same pattern as expiry — see Section D) |
+| Admin signs (no reject, no update requested) | sellerAgreementAdminSignedAt set, plus sellerAgreementAdminSignerId → status \= Agreement Complete → proceeds to Step 2 (Buyer Deposit) |
+| Status after | Deposit Payment |
+
+## Step 2 — Buyer Pays Deposit
+
+![][image3]
+
+| Item | Detail |
+| :---- | :---- |
+| Trigger | Seller agreement fully complete (sellerAgreementStatus \= "signed" and sellerAgreementAdminSignedAt set — i.e. Step 1's Agreement Complete) |
+| Current behavior | No separate pending\_seller step exists. currentStep \= deposit\_payment from the moment the session is created (see A.2, Step 1). The deposit gate (all transactions must reach sellerAgreementStatus \= signed) is enforced as a business rule, not a distinct currentStep value. See Section H for Sophia's proposed pending\_seller step. |
+| Payment method | Stripe |
+| Payment succeeds | depositPaidAt set → advance to next step (Step 3: Buyer Signs Agreement) |
+| Payment fails / not made | If current\_step is still deposit\_payment and expiryDate \< now → transaction cancelled (full void — match released, order back to waitlist, same outcome as Step 1's Payout Cancelled/Expired) |
+| Deposit deadline | expiryDate \= transaction created \+ 3 days (confirmed — same reference point for both single-transaction and multi-transaction sessions) |
+| Status after | Agreement Signing |
+
+## Step 3 — Buyer Signs Agreement
+
+![][image4]
+
+| Item | Detail |
+| :---- | :---- |
+| Trigger | Deposit paid (status \= "deposit\_paid") |
+| currentStep | agreement\_signing — spans both buyer-sign and admin-review sub-states (same pattern as pending\_seller in Step 2\) |
+| Signing deadline | expiryDate \= depositPaidAt \+ 3 days |
+| Buyer rejects | buyerDocuSignRejectedAt set → transaction cancelled, status updated |
+| Buyer signs | buyerDocuSignSignedAt set (overwritten on re-sign) → pending admin review |
+| Deadline passes with no buyer action | Transaction cancelled |
+| Admin requests update | buyerAgreementUpdateRequestedAt set → loops back to Pending buyer signature, expiryDate reset to now \+ 3 days |
+| Admin rejects | buyerDocuSignAdminRejectedAt set → transaction cancelled, status updated |
+| Admin signs | buyerDocuSignAdminSignedAt set → Agreement Complete → proceeds to Step 4 (Final Payment) |
+| Status after | Invoice Payment |
+
+## Step 4 — Buyer Pays Remaining Balance
+
+![][image5]
+
+### Case 1: Stripe Payment
+
+| Item | Detail |
+| :---- | :---- |
+| Status transition | status: agreement\_signed → invoice\_paid |
+| Step transition | currentStep: invoice\_payment → ownership\_transfer |
+| manualPayment\* fields | Not used — all remain null on both sides |
+| Stripe confirmation timestamp | None found — no dedicated field recording when Stripe confirmed the payment |
+| Payout status after payment | Still not\_ready |
+
+### Case 2: Manual Payment
+
+| Item | Detail |
+| :---- | :---- |
+| Status transition | status: invoice\_submitted → invoice\_paid |
+| Step transition | currentStep: invoice\_payment → ownership\_transfer |
+| manualPaymentStatus | pending\_review → approved |
+| manualPaymentReviewedAt | null → timestamp set (e.g. 2026-08-28T05:00:11.756Z) |
+| manualPaymentReviewerId | null → admin ID set |
+| manualPaymentEvidenceUrl, manualPaymentNotes | Already populated from the earlier proof-upload step; unchanged on approval |
+
+⚠️ Flagged issue (needs bug-vs-feature check): manualPaymentStatus can currently be set to rejected, but status and currentStep do not change when this happens — the transaction appears stuck with no visible state transition. Needs confirmation from BE on whether this is intended (e.g. buyer expected to resubmit evidence silently) or a genuine gap.
+
+Open Question: No Stripe-confirmation timestamp field found in Case 1 — is payment time meant to be pulled from Stripe's own records/webhook log rather than stored on this object? 
+
+### expiryDate for this step
+
+Same mechanism for both cases:
+
+| Item | Detail |
+| :---- | :---- |
+| Deadline calculation | expiryDate \= buyerDocuSignAdminSignedAt (top-level) \+ 3 days — same formula for Stripe and Manual, no path-specific logic |
+| When it's set | Once, at the moment buyerDocuSignAdminSignedAt is set (Step 3, admin signs buyer agreement) — not re-set at any point during Step 4 |
+| Behavior through the step | Stays unchanged across invoice\_payment → ownership\_transfer — no reset, no recalculation |
+| Status after (both cases) | Ownership Transfer |
+
+### Cancellation — expiry during invoice\_payment:
+
+| Item | Detail |
+| :---- | :---- |
+| Trigger | currentStep \= "invoice\_payment" and expiryDate \< now (deadline passed, no final payment) |
+| Effect | Payment cancelled |
+| Cascade | All payouts linked to that payment are also cancelled |
+| Mechanics | Same cascade engine as Steps 1–3 (Payment ↔ Payout cascade) — see Expiration & Cascade Cancellation Handling doc, Section 3.2 (Payment expiry/cancellation cascades to all linked Payouts) |
+
+## Step 5 — Admin Transfers Ownership
+
+![][image6]
+
+| Item | Detail |
+| :---- | :---- |
+| Trigger | Full payment confirmed |
+| Actor | Admin |
+| Action | Admin uploads the ownership transfer document and marks the step complete |
+| Field set on upload | ownershipTransferDocumentUrl |
+| Status transition | status → completed |
+| currentStep | Unchanged — no further currentStep value after ownership\_transfer |
+| System side-effect | On status \= completed, system auto-triggers payout: payoutStatus → processing, payoutReference and payoutMetadata generated from Stripe |
+| Status after | Completed |
+
+# D. Cancellation Points Summary
+
+All cancellation outcomes below are full transaction cancellation — match released, order returns to waitlist. Confirmed as consistent across Steps 1–3.
+
+| Step | Cancel trigger | Field set |
+| :---- | :---- | :---- |
+| 1 — Seller Agreement | Seller rejects | sellerAgreementRejectedAt |
+| 1 — Seller Agreement | Deadline passed, no seller action | — |
+| 1 — Seller Agreement | Admin rejects | sellerAgreementAdminRejectedAt |
+| 2 — Deposit | Deadline passed, no payment | — |
+| 3 — Buyer Agreement | Buyer rejects | buyerDocuSignRejectedAt |
+| 3 — Buyer Agreement | Deadline passed, no buyer action | — |
+| 3 — Buyer Agreement | Admin rejects | buyerDocuSignAdminRejectedAt |
+| 4 — Final/Invoice Payment | Deadline passed (currentStep \= invoice\_payment, expiryDate \< now) | — |
+
+# E. Suggestions — Proposed Improvements
+
+| \# | Suggestion | Problem it solves | Current behavior (for contrast) |
+| :---- | :---- | :---- | :---- |
+| 1 | Reset sellerAgreementSignatureDueAt to null when seller signs (before admin review) | Prevents a signed agreement from expiring while sitting in admin review, or expiring right after signing | Currently not reset — sellerAgreementSignatureDueAt stays at its original value through admin review.  Concern: Is admin review fast enough that this rarely matters? |
+| 2 | Add a distinct pending\_seller currentStep, with no expiryDate, active while Step 1 (seller sign \+ admin review) is in progress | Makes the "waiting on seller side" period explicit and inspectable via currentStep, rather than inferred from sellerAgreementStatus across N transactions | Currently currentStep \= deposit\_payment from session creation — the seller-side waiting period isn't reflected in currentStep at all |
+
+# F. Open Questions Summary
+
+1. (Section A.2) Is the mirror-latest-touch behavior for session expiryDate/buyerDocuSignStatus intentional or a known gap? Needs explicit multi-transaction test cases.
+
+2. (Section A.2) Do reject paths (sellerAgreementRejectedAt, sellerAgreementAdminRejectedAt, buyerDocuSignRejectedAt, buyerDocuSignAdminRejectedAt) still apply per-transaction in the multi-transaction session model, with the same cascade-cancel-session behavior?
