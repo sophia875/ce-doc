@@ -5,7 +5,7 @@
 
 ## US-[FEATURE-CODE]-[NUMBER]: [Tiêu đề ngắn gọn]
 
-**As a** [persona cụ thể - không dùng "user" chung chung; ví dụ: học viên Digital School đã xác thực email]
+**As a** [persona cụ thể - không dùng "user" chung chung; ví dụ: Buyer đã hoàn tất KYC và đang có Bid Active]
 
 **I want to** [hành động cụ thể, đo lường được]
 
