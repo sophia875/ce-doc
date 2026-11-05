@@ -1,262 +1,236 @@
-# Ví dụ User Story + AC mẫu cho EdTech & Digital School
+# Ví dụ User Story + AC mẫu cho Cask Exchange
 
-> 7 ví dụ thực tế từ các domain phổ biến trong sản phẩm giáo dục trực tuyến:
-> đăng ký học, thanh toán, theo dõi tiến độ, mentor, chứng chỉ,
-> live class, và quản lý doanh nghiệp đối tác.
+> Bản chỉnh cho dự án **Cask Exchange**, dựa trên bộ ví dụ gốc của **Phúc NT** · BA Zone · Digital School.
 >
-> Biên soạn bởi **Phúc NT** cho chương trình đào tạo **Digital School** 
-> của **BA Zone** — cộng đồng Business Analyst & Product Owner Việt Nam.
->
-> Tên thương hiệu được generic hóa: Platform X, Partner X, Provider X...
+> **Lưu ý:** số tiền, thời hạn và message trong file này chỉ để minh họa format. Khi viết story thật,
+> lấy số liệu từ spec trong `docs/` và rule đã chốt ở `docs/project-summary.md` mục 4.
+> Chỗ nào chưa có thì ghi `[OPEN]` kèm người cần trả lời, không tự đoán.
 
 ---
 
-## Ví dụ 1: Đăng ký và thanh toán khóa học
+## Ví dụ 1: Đặt Bid có cảnh báo giá
 
-### US-ENROLL-001: Đăng ký khóa học và thanh toán qua ví điện tử
+### US-BID-001: Place a Bid on a vintage
 
-**As a** học viên đã có tài khoản BA Zone và liên kết ví điện tử
-**I want to** mua khóa học "Business Analysis Fundamentals" và thanh toán bằng ví
-**So that** có thể truy cập ngay nội dung học mà không cần chờ xác nhận thủ công
+**As a** signed-in Buyer who has completed KYC
+**I want to** place a Bid on a vintage at my own price per unit
+**So that** I can try to buy below the Lowest Ask instead of paying the current market price
 
-**INVEST Self-check:**
+**Metadata**: Epic: Buy Flow · Priority: Must · Core flow: Place Bid / Ask
 
-| Tiêu chí | ✅/⚠️ | Ghi chú |
-|----------|------|---------|
-| Independent | ✅ | Liên kết ví đã có (story riêng) |
-| Negotiable | ✅ | Chưa cố định payment gateway |
-| Valuable | ✅ | Học viên được học ngay, BA Zone nhận doanh thu |
-| Estimable | ✅ | Luồng thanh toán tương tự story trước |
-| Small | ✅ | ~3 ngày dev |
-| Testable | ✅ | AC đo được |
+### INVEST Self-check
 
-**AC1: Thanh toán và enroll thành công - happy path**
-- **Given** học viên chọn khóa "BA Fundamentals" giá 1.500.000 VND
-- **And** số dư ví ≥ 1.500.000 VND và khóa học còn slot
-- **When** học viên ấn "Đăng ký ngay" → xác nhận thanh toán → nhập PIN ví
-- **Then** hệ thống trừ 1.500.000 VND từ ví trong vòng 5 giây
-- **And** tự động enroll học viên vào khóa học
-- **And** gửi email xác nhận kèm link truy cập và lưu vào "Khóa học của tôi"
+| Tiêu chí | Đánh giá | Ghi chú |
+|----------|----------|---------|
+| Independent | ✅ | Login, KYC and Cask Detail already exist |
+| Negotiable | ✅ | Expiry options can be discussed later |
+| Valuable | ✅ | Lets price-sensitive buyers enter the market |
+| Estimable | ✅ | Matching rules are already documented |
+| Small | ✅ | Create only. Update and cancel are separate stories |
+| Testable | ✅ | 4 AC with clear numbers |
 
-**AC2: Số dư ví không đủ**
-- **Given** số dư ví là 800.000 VND, giá khóa học 1.500.000 VND
-- **When** học viên ấn "Đăng ký ngay"
-- **Then** hệ thống hiển thị "Số dư không đủ. Bạn cần thêm 700.000 VND"
-- **And** cung cấp 2 lựa chọn: "Nạp tiền vào ví" và "Chọn phương thức khác"
-- **And** không trừ tiền và không tạo enrollment
+### Acceptance Criteria
 
-**AC3: Mất kết nối trong khi xử lý thanh toán**
-- **Given** học viên đã xác nhận thanh toán và hệ thống đang xử lý
-- **When** mạng bị ngắt trong vòng 30 giây
-- **Then** hệ thống hiển thị "Đang xác thực giao dịch..."
-- **And** sau khi có mạng lại, tự động kiểm tra trạng thái giao dịch
-- **And** hiển thị kết quả cuối cùng (thành công / thất bại) mà không trừ tiền 2 lần
+**AC1: Place a Bid within the normal price range - happy path**
+- **Given** the Buyer is on the detail page of "Glen Example 2015" with a Market Value of £10,000 per unit
+- **When** the Buyer places a Bid of £9,500 per unit for a target quantity of 2 and confirms the order summary
+- **Then** the system creates a Bid with status Active, target quantity 2 and filled quantity 0
+- **And** the Bid appears in the Buyer's Open Bids list
 
----
+**AC2: Bid at 120% of Market Value - edge case (upper boundary)**
+- **Given** the Market Value is £10,000 per unit
+- **When** the Buyer enters a Bid of £12,000 per unit
+- **Then** the system shows the price warning before the confirmation step
+- **And** the Buyer can still continue and place the Bid
 
-## Ví dụ 2: Đặt lịch 1-on-1 với Mentor
+**AC3: Bid at 80% of Market Value - edge case (lower boundary)**
+- **Given** the Market Value is £10,000 per unit
+- **When** the Buyer enters a Bid of £8,000 per unit
+- **Then** the system shows the price warning before the confirmation step
+- **And** the Buyer can still continue and place the Bid
 
-### US-MENTOR-BOOK-001: Đặt lịch tư vấn 1-on-1 với Mentor BA Zone
+**AC4: Invalid price - negative path**
+- **Given** the Buyer is on the Place Bid form
+- **When** the Buyer enters a price of £0 and tries to continue
+- **Then** the system shows a validation error on the price field
+- **And** no Bid is created
 
-**As a** học viên Digital School đang theo học chương trình BA Advanced
-**I want to** đặt lịch tư vấn 1-on-1 với mentor có chuyên môn phù hợp
-**So that** nhận được hướng dẫn cụ thể cho bài tập thực hành mà không cần chờ buổi học chung
-
-**AC1: Đặt lịch thành công**
-- **Given** học viên chọn Mentor Phúc NT, slot trống ngày 15/06/2026 lúc 20:00
-- **And** học viên còn 1 session 1-on-1 trong gói tháng
-- **When** học viên xác nhận đặt lịch và nhập chủ đề cần tư vấn
-- **Then** hệ thống tạo booking MNT20260615001 và gửi link Google Meet cho cả 2 bên
-- **And** trừ 1 session khỏi quota tháng của học viên
-- **And** gửi reminder 1 giờ trước buổi tư vấn qua email và app notification
-
-**AC2: Race condition - slot bị người khác đặt trước**
-- **Given** học viên đang ở màn hình xác nhận slot 20:00 ngày 15/06
-- **When** học viên ấn "Đặt lịch" nhưng slot vừa được học viên khác đặt 3 giây trước
-- **Then** hệ thống hiển thị "Slot này vừa được đặt. Vui lòng chọn slot khác"
-- **And** cập nhật lịch trống của mentor trong thời gian thực
-- **And** không trừ session quota và không tạo booking
-
-**AC3: Mentor hủy buổi tư vấn**
-- **Given** học viên đã đặt lịch thành công với mentor
-- **When** mentor hủy buổi tư vấn ít nhất 6 tiếng trước giờ hẹn
-- **Then** hệ thống hoàn lại 1 session vào quota tháng của học viên
-- **And** gửi thông báo lý do hủy và đề xuất 3 slot thay thế trong 7 ngày tới
-- **And** đánh dấu lịch hủy vào hồ sơ mentor để team chất lượng theo dõi
+### Notes
+- Dependencies: matching rules (`docs/order-matching-update-specs.md`)
+- Open Questions: `[OPEN, Sophia]` PRD says a Bid must be below the Lowest Ask, while matching rules say a Bid matches the Lowest Ask first. Is a Bid at or above the Lowest Ask blocked, or matched straight away?
 
 ---
 
-## Ví dụ 3: Theo dõi tiến độ học
+## Ví dụ 2: Sell Now từ portfolio
 
-### US-PROGRESS-001: Xem báo cáo tiến độ học cá nhân
+### US-SELL-NOW-001: Sell a vintage at the Highest Bid
 
-**As a** học viên đang theo học nhiều khóa học song song trên BA Zone
-**I want to** xem dashboard tiến độ học cá nhân theo từng khóa
-**So that** biết mình đang ở đâu trong lộ trình và ưu tiên ôn tập những phần chưa hoàn thành
+**As a** Seller who owns a vintage bought on Cask Exchange and has connected a Stripe account
+**I want to** sell it at the current Highest Bid in one step
+**So that** I can exit my position without waiting for a buyer to accept my price
 
-**AC1: Hiển thị dashboard tiến độ đúng**
-- **Given** học viên đang theo học 2 khóa: "BA Fundamentals" (hoàn thành 60%) và "Agile for BA" (hoàn thành 20%)
-- **When** học viên vào mục "Tiến độ học của tôi"
-- **Then** hệ thống hiển thị % hoàn thành từng khóa, số bài đã xem, số bài còn lại
-- **And** highlight bài học tiếp theo cần làm cho từng khóa
-- **And** dữ liệu được cập nhật trong vòng 1 phút sau khi học viên hoàn thành bài học
+**Metadata**: Epic: Sell Flow · Priority: Must · Core flow: Sell Now -> Matching
 
-**AC2: Học viên chưa bắt đầu khóa học**
-- **Given** học viên đã mua khóa "SQL for BA" nhưng chưa vào học bài nào
-- **When** học viên xem tiến độ của khóa đó
-- **Then** hiển thị "0% hoàn thành - Bắt đầu học ngay!" với CTA rõ ràng
-- **And** không hiển thị % ảo hoặc dữ liệu lỗi
+### Acceptance Criteria
 
-**AC3: Dữ liệu tiến độ không đồng bộ sau khi học offline**
-- **Given** học viên đã hoàn thành 3 bài học khi không có mạng
-- **When** học viên kết nối lại internet
-- **Then** hệ thống đồng bộ tiến độ trong vòng 60 giây
-- **And** cập nhật % hoàn thành chính xác, không bị reset về số cũ
-- **And** hiển thị thông báo "Tiến độ đã được cập nhật"
+**AC1: Sell Now with an Active Bid - happy path**
+- **Given** the Seller owns 1 unit of "Glen Example 2015"
+- **And** the Highest Bid from another user is £10,000 per unit
+- **When** the Seller chooses Sell Now for 1 unit and confirms
+- **Then** the confirmation screen showed a price of £10,000, a seller fee of £500 (5%) and net proceeds of £9,500
+- **And** the order is matched with the Highest Bid and a Checkout Session is created with status `pending_seller`
 
----
+**AC2: No Active Bid - edge case**
+- **Given** the Seller owns 1 unit of "Glen Example 2015"
+- **And** there is no Active Bid for this vintage
+- **When** the Seller opens the vintage in the portfolio
+- **Then** Sell Now is not available
+- **And** the Seller can place an Ask instead
 
-## Ví dụ 4: Cấp phát chứng chỉ hoàn thành khóa học
+**AC3: Stripe account not connected - negative path**
+- **Given** the Seller owns 1 unit of "Glen Example 2015" but has not connected a Stripe account
+- **When** the Seller chooses Sell Now
+- **Then** the system asks the Seller to connect a Stripe account first
+- **And** no order is created
 
-### US-CERT-001: Cấp chứng chỉ hoàn thành khóa học cho học viên Digital School
-
-**As a** học viên vừa hoàn thành 100% khóa học và đạt điểm kiểm tra cuối khóa
-**I want to** nhận chứng chỉ hoàn thành có tên tôi, tên khóa học và mã xác thực
-**So that** có bằng chứng cụ thể để cập nhật vào LinkedIn và hồ sơ xin việc
-
-**AC1: Cấp chứng chỉ tự động khi đủ điều kiện**
-- **Given** học viên Nguyễn Văn A hoàn thành 100% bài học và đạt ≥ 70% điểm bài kiểm tra cuối khóa "BA Fundamentals"
-- **When** hệ thống xác nhận kết quả kiểm tra
-- **Then** tự động sinh chứng chỉ PDF có mã xác thực CERT-BAF-2026-00123
-- **And** gửi file chứng chỉ qua email trong vòng 5 phút
-- **And** lưu chứng chỉ vào mục "Thành tích của tôi" trên BA Zone
-
-**AC2: Học viên chưa hoàn thành đủ điều kiện**
-- **Given** học viên hoàn thành 100% bài học nhưng điểm kiểm tra cuối khóa là 55%
-- **When** hệ thống xử lý kết quả
-- **Then** không cấp chứng chỉ
-- **And** hiển thị "Bạn cần đạt tối thiểu 70% để nhận chứng chỉ. Điểm hiện tại: 55%. Làm lại bài kiểm tra?"
-- **And** cho phép làm lại bài kiểm tra sau 24 giờ
-
-**AC3: Xác thực chứng chỉ từ bên ngoài**
-- **Given** nhà tuyển dụng nhận được chứng chỉ PDF từ học viên và truy cập link xác thực
-- **When** nhà tuyển dụng nhập mã CERT-BAF-2026-00123 vào trang verify.bazone.vn
-- **Then** hệ thống hiển thị thông tin: tên học viên, tên khóa học, ngày cấp, kết quả
-- **And** nếu mã không tồn tại hoặc bị giả mạo, hiển thị "Mã chứng chỉ không hợp lệ"
+### Notes
+- Open Questions: `[OPEN, Hung]` If another Seller takes the Highest Bid while this Seller is on the confirmation screen, what does the Seller see?
 
 ---
 
-## Ví dụ 5: Live Class & Q&A
+## Ví dụ 3: Thanh toán deposit trong checkout
 
-### US-LIVE-001: Đặt câu hỏi trong buổi Live Class của BA Zone
+### US-CHECKOUT-DEP-001: Pay the deposit for a matched order
 
-**As a** học viên đang tham dự live class trực tuyến
-**I want to** gửi câu hỏi bằng văn bản trong khi giảng viên đang trình bày
-**So that** không làm gián đoạn bài giảng nhưng vẫn được giải đáp vào phần Q&A cuối buổi
+**As a** Buyer whose Checkout Session is at step 2 Deposit (status `pending`)
+**I want to** pay the deposit by card
+**So that** the trade moves to the buyer agreement step and I keep the matched casks
 
-**AC1: Gửi câu hỏi thành công**
-- **Given** học viên đang trong buổi live class đang diễn ra
-- **When** học viên nhập câu hỏi (tối đa 500 ký tự) và ấn "Gửi"
-- **Then** câu hỏi xuất hiện trong hàng đợi Q&A hiển thị cho giảng viên
-- **And** học viên thấy trạng thái "Câu hỏi đã gửi - Chờ được giải đáp"
-- **And** các học viên khác có thể vote "Tôi cũng có câu hỏi này" (+1)
+**Metadata**: Epic: Checkout · Priority: Must · Core flow: Checkout step 2
 
-**AC2: Câu hỏi trùng lặp đã có người hỏi**
-- **Given** câu hỏi của học viên trùng nội dung với câu hỏi đã có trong hàng đợi (similarity ≥ 80%)
-- **When** học viên ấn "Gửi"
-- **Then** hệ thống gợi ý "Câu hỏi tương tự đã được gửi. Bạn có muốn vote ủng hộ không?"
-- **And** nếu học viên đồng ý, cộng thêm 1 vote vào câu hỏi gốc thay vì tạo câu mới
+### Acceptance Criteria
 
-**AC3: Buổi live class đã kết thúc**
-- **Given** buổi live class đã kết thúc (trạng thái "Ended")
-- **When** học viên cố gắng gửi câu hỏi qua giao diện live
-- **Then** hệ thống ẩn ô nhập câu hỏi và hiển thị "Buổi học đã kết thúc. Xem lại recording hoặc đặt câu hỏi trong diễn đàn khoá học"
-- **And** cung cấp link đến forum của khoá học
+**AC1: Deposit paid - happy path**
+- **Given** the session Subtotal is £20,000, so the Total is £21,000 (Subtotal + 5% buyer fee)
+- **When** the Buyer pays the deposit by card before the deadline
+- **Then** the Buyer is charged £2,100 (10% of the Total)
+- **And** the session moves to `buyer_signature`
+- **And** the buyer agreement deadline is set to 3 days after the deposit was paid
 
----
+**AC2: Session with 2 transactions (1:N) - edge case**
+- **Given** one Bid was matched with 2 Asks, so the session holds 2 transactions with a combined Total of £21,000
+- **When** the Buyer pays the deposit
+- **Then** the Buyer makes one card payment of £2,100 for the whole session
 
-## Ví dụ 6: Quản lý tài khoản doanh nghiệp đối tác
+**AC3: Card declined before the deadline - edge case**
+- **Given** the deposit deadline has not passed
+- **When** the Buyer's card is declined
+- **Then** the session stays `pending` and the Buyer can try again
+- **And** no email is sent
 
-### US-B2B-ENROLL-001: Doanh nghiệp cấp phát khóa học cho nhân viên theo lô
+**AC4: Deadline passes without payment - negative path**
+- **Given** the Buyer has not paid the deposit
+- **When** the deposit deadline (3 days after the last seller agreement was signed by Admin) passes
+- **Then** the session becomes `expired` and the Buyer's matched quantity is cancelled
+- **And** the Seller's quantity goes back to the market with its original priority
+- **And** the cancellation email does not mention refunds
 
-**As a** HR Manager của doanh nghiệp đối tác đã ký hợp đồng với BA Zone
-**I want to** cấp phát khóa học cho danh sách nhân viên bằng cách upload file Excel
-**So that** không phải enroll từng người một khi số lượng nhân viên lớn (> 20 người)
-
-**AC1: Upload và enroll thành công**
-- **Given** HR Manager upload file Excel đúng template (họ tên, email, khóa học) với 50 nhân viên
-- **And** tài khoản doanh nghiệp còn đủ 50 license chưa kích hoạt
-- **When** HR Manager ấn "Xác nhận cấp phát"
-- **Then** hệ thống enroll 50 nhân viên vào khóa học trong vòng 2 phút
-- **And** gửi email chào mừng kèm thông tin đăng nhập đến từng nhân viên
-- **And** hiển thị báo cáo kết quả: 50/50 thành công
-
-**AC2: File có một số dòng dữ liệu không hợp lệ**
-- **Given** file Excel có 50 dòng, trong đó 3 dòng có email sai định dạng và 2 dòng bị trùng email
-- **When** HR Manager upload file
-- **Then** hệ thống hiển thị preview với highlight 5 dòng lỗi, mô tả lỗi cụ thể từng dòng
-- **And** cho phép tiếp tục enroll 45 dòng hợp lệ hoặc sửa file và upload lại
-- **And** không enroll các dòng lỗi dù HR Manager chọn tiếp tục
-
-**AC3: Không đủ license**
-- **Given** tài khoản doanh nghiệp còn 30 license, nhưng file upload có 50 nhân viên
-- **When** HR Manager ấn "Xác nhận cấp phát"
-- **Then** hệ thống dừng lại và thông báo "Bạn cần thêm 20 license. Liên hệ BA Zone để mua thêm"
-- **And** không enroll bất kỳ ai và không trừ license
-- **And** cung cấp link tới trang nâng cấp gói doanh nghiệp
+### Notes
+- Release rules: `docs/expiration-handling-specs-partial-reversion.md` section 4
+- On staging each step expires after 5 minutes, so QA can test AC4
 
 ---
 
-## Ví dụ 7: Diễn đàn học tập & Cộng đồng BA Zone
+## Ví dụ 4: Hủy Bid đã khớp một phần
 
-### US-FORUM-COMPLAINT-001: Báo cáo nội dung vi phạm trong diễn đàn
+### US-BID-CANCEL-001: Cancel the unmatched part of a Bid
 
-**As a** thành viên cộng đồng BA Zone đang tham gia thảo luận trong diễn đàn
-**I want to** báo cáo bài viết hoặc bình luận có nội dung vi phạm quy tắc cộng đồng
-**So that** được xem xét và xử lý kịp thời, giữ chất lượng thảo luận trong cộng đồng
+**As a** Buyer with an Active Bid on a vintage
+**I want to** cancel the part of my Bid that has not been matched
+**So that** I stop buying more units while keeping the deal that is already in checkout
 
-**AC1: Gửi báo cáo vi phạm thành công**
-- **Given** thành viên đang xem bài viết có nội dung spam hoặc sai lệch kiến thức BA
-- **When** thành viên ấn "Báo cáo" → chọn lý do → mô tả thêm (tùy chọn) → gửi
-- **Then** hệ thống tạo ticket RPT20260506001 và xác nhận "Báo cáo của bạn đã được ghi nhận"
-- **And** auto-assign đến Moderator trực trong ca
-- **And** nếu bài viết nhận ≥ 5 báo cáo trong vòng 1 giờ, tạm ẩn chờ Moderator duyệt
+### Acceptance Criteria
 
-**AC2: Theo dõi trạng thái xử lý báo cáo**
-- **Given** thành viên đã gửi báo cáo thành công
-- **When** Moderator cập nhật trạng thái (Đang xem xét → Đã xử lý / Không vi phạm)
-- **Then** thành viên nhận notification về kết quả và lý do quyết định
-- **And** nếu được xác nhận vi phạm, thành viên thấy "Cảm ơn bạn đã góp phần xây dựng cộng đồng"
+**AC1: Cancel a Bid with nothing matched - happy path**
+- **Given** the Buyer has an Active Bid with target quantity 5 and filled quantity 0
+- **When** the Buyer cancels the Bid and confirms
+- **Then** the Bid status becomes Cancelled
+- **And** the Bid can no longer be matched
 
-**AC3: Báo cáo không có phản hồi sau 48 giờ**
-- **Given** ticket báo cáo đã tạo nhưng chưa được xử lý sau 48 giờ
-- **When** hệ thống kiểm tra SLA tự động
-- **Then** escalate ticket lên Community Manager
-- **And** gửi thông báo xin lỗi đến người báo cáo và cam kết xử lý trong 12 giờ tiếp theo
+**AC2: Cancel a partly matched Bid - edge case**
+- **Given** the Buyer has an Active Bid with target quantity 10 and filled quantity 4, and the 4 units are in a Checkout Session
+- **When** the Buyer cancels the Bid and confirms
+- **Then** the remaining 6 units are closed and can no longer be matched
+- **And** the Checkout Session for the 4 matched units does not change
 
----
+**AC3: Bid already closed - negative path**
+- **Given** the Buyer's Bid is Completed, Expired or Cancelled
+- **When** the Buyer views the Bid
+- **Then** the cancel action is not available
+- **And** the Bid does not change
 
-## Patterns rút ra từ 7 ví dụ trên
-
-1. **Persona luôn cụ thể**: không bao giờ "user" chung, luôn có context 
-   (học viên Digital School đang theo học BA Advanced, HR Manager đã ký hợp đồng...)
-
-2. **Goal đo lường được**: có số liệu cụ thể (50 nhân viên, ≥ 70% điểm, 500 ký tự)
-
-3. **So that focus business outcome**: nhận doanh thu ngay, giảm thao tác thủ công, 
-   có bằng chứng cho nhà tuyển dụng
-
-4. **AC luôn có 3 path**: Happy + Edge case + Negative/Error
-
-5. **Edge case mang tính domain**: race condition lịch mentor, license không đủ, 
-   câu hỏi trùng lặp, kết nối gián đoạn khi thi
-
-6. **Số liệu trong AC**: thời gian phản hồi (5 phút, 60 giây), ngưỡng điểm (≥ 70%),
-   số lượng báo cáo để tự ẩn (≥ 5)
-
-7. **Tránh implementation detail**: không nói API name, DB schema, framework cụ thể
+### Notes
+- Open Questions: `[OPEN, Sophia]` After AC2, which status does the Bid show: Cancelled or Completed?
 
 ---
 
-*Biên soạn bởi **Phúc NT** · BA Zone · Digital School*  
-*Vui lòng dẫn nguồn khi sử dụng hoặc chia sẻ tài liệu này.*
+## Ví dụ 5: Admin hoàn tất chuyển quyền sở hữu
+
+### US-ADMIN-OWN-001: Complete ownership transfer
+
+**As an** Admin (client ops team) handling a Checkout Session with status `invoice_paid`
+**I want to** upload the ownership documents and mark the transfer as complete
+**So that** the Buyer officially owns the vintage and the Seller gets paid
+
+### Acceptance Criteria
+
+**AC1: Complete the transfer - happy path**
+- **Given** the session is `invoice_paid` and has 1 transaction worth £10,000
+- **When** the Admin uploads the ownership documents and completes the transfer
+- **Then** the session becomes `completed`
+- **And** the payout for the Seller moves from `not_ready` to `processing` with an amount of £9,500 (match value minus 5% fee)
+
+**AC2: Session with 2 Sellers (1:N) - edge case**
+- **Given** the session is `invoice_paid` with 2 transactions: £12,000 from Seller A and £8,000 from Seller B
+- **When** the Admin completes the transfer
+- **Then** Seller A gets a payout of £11,400 and Seller B gets a payout of £7,600
+- **And** both payouts move to `processing`
+
+**AC3: Final payment not confirmed yet - negative path**
+- **Given** the session is `invoice_submitted` (bank transfer proof waiting for review)
+- **When** the Admin opens the session
+- **Then** the Admin cannot complete the ownership transfer
+
+### Notes
+- Payout failure and retry belong to a separate story (see Ví dụ 6, split by business rule)
+
+---
+
+## Ví dụ 6: Story quá lớn cần split
+
+❌ **Quá lớn:**
+"As a Buyer, I want to manage my Bids (view, change price, change quantity, cancel)"
+(Có chữ "manage", gộp nhiều thao tác, mỗi thao tác có rule priority/matching khác nhau)
+
+✅ **Split thành:**
+- **US-BID-VIEW-001**: View my Open Bids
+- **US-BID-PRICE-001**: Change the price of an Active Bid (price change resets priority and re-runs matching)
+- **US-BID-QTY-001**: Change the target quantity of an Active Bid (increase resets priority and re-runs matching; decrease does not; cannot go below the filled quantity)
+- **US-BID-CANCEL-001**: Cancel the unmatched part of a Bid (Ví dụ 4)
+
+---
+
+## Patterns rút ra từ các ví dụ trên
+
+1. **Persona có trạng thái**: Buyer / Seller là vai trò trong 1 giao dịch. Luôn kèm điều kiện: đã KYC, đã connect Stripe, đang ở bước checkout nào.
+2. **Ghi vị trí trên core flow** trong Metadata: Browse -> Order -> Matching -> Checkout (5 bước) -> Payout.
+3. **Edge case đặc thù**: 0, null, cancel, expire, partial match, 1:N session, hai user cùng lúc. Chọn case phù hợp, không cần đủ hết.
+4. **Tiền có số cụ thể** bằng £: fee 5% mỗi bên, deposit 10% của Total, payout = match value trừ 5%.
+5. **Quantity nói rõ loại**: target / filled / remaining, không ghi chung chung.
+6. **Status dùng đúng tên** có sẵn (`pending_seller`, `pending`, `buyer_signature`, Active, Cancelled...).
+7. **Không biết thì `[OPEN]`** kèm người cần trả lời. Mâu thuẫn với rule đã chốt thì ghi rõ conflict.
+8. **Split** theo thao tác (view / change price / change quantity / cancel), theo bước checkout, hoặc theo business rule.
+
+---
+*Ví dụ gốc: **Phúc NT** · BA Zone · Digital School. Chỉnh cho Cask Exchange.*
+*Vui lòng giữ nguyên attribution khi chia sẻ hoặc fork.*

@@ -5,6 +5,7 @@
 >
 > Tài liệu này được biên soạn bởi **Phúc NT** cho chương trình **Digital School**
 > của **BA Zone** — cộng đồng Business Analyst & Product Owner Việt Nam.
+> Phần ví dụ đã được chỉnh cho dự án **Cask Exchange**.
 
 ---
 
@@ -29,15 +30,15 @@ Tránh phụ thuộc cứng giữa các story.
 - Tách dependency ra thành story riêng + đặt ưu tiên trước
 - Dùng mock data / stub để test độc lập
 
-### Ví dụ (Digital School)
+### Ví dụ (Cask Exchange)
 
 ❌ **Vi phạm**: 
-- US-1: Tạo tài khoản học viên
-- US-2: Enroll khóa học (chỉ test được sau khi US-1 xong)
+- US-1: Place a Bid
+- US-2: Cancel a Bid (chỉ test được sau khi US-1 xong)
 
 ✅ **Đạt chuẩn**:
-- US-1: Tạo tài khoản học viên (test với DB seed)
-- US-2: Enroll khóa học (test với account học viên có sẵn trong test data)
+- US-1: Place a Bid (test với vintage có sẵn trên staging)
+- US-2: Cancel a Bid (test với Bid Active có sẵn trong test data)
 
 ---
 
@@ -62,16 +63,16 @@ Story là "lời mời thảo luận", không phải hợp đồng cứng. Chi t
 - Đẩy chi tiết "how" sang AC hoặc tech design doc
 - Dùng wireframe thay vì pixel-perfect mockup ở giai đoạn story
 
-### Ví dụ (Digital School)
+### Ví dụ (Cask Exchange)
 
 ❌ **Vi phạm**:
-"As a học viên, I want to login using a 256-bit AES encrypted JWT token stored 
-in localStorage with refresh token rotation every 15 minutes..."
+"As a Buyer, I want the deposit charged through a Stripe PaymentIntent with 
+manual capture, retried by a BullMQ job every 10 minutes..."
 
 ✅ **Đạt chuẩn**:
-"As a học viên đã đăng ký, I want to đăng nhập an toàn vào BA Zone so that 
-I can access my courses without repeated authentication."
-(Chi tiết bảo mật để dev/security team thiết kế)
+"As a Buyer at the deposit step, I want to pay the deposit by card so that 
+my matched order moves to the buyer agreement step."
+(Chi tiết thanh toán để dev thiết kế)
 
 ---
 
@@ -96,16 +97,16 @@ Không có story "vì kỹ thuật yêu cầu".
 - Tech debt nên đóng gói thành story có giá trị business (giảm bug, tăng tốc)
 - Hỏi "Why?" 5 lần để tìm giá trị thật
 
-### Ví dụ (Digital School)
+### Ví dụ (Cask Exchange)
 
 ❌ **Vi phạm**:
-"As a developer, I want to upgrade video player từ v2 lên v4 so that 
-we use the latest version."
+"As a developer, I want to move expiry to a job queue so that 
+we use a queue."
 
 ✅ **Đạt chuẩn**:
-"As a học viên, I want video bài giảng load trong vòng 3 giây so that 
-tôi không bỏ học giữa chừng khi kết nối mạng yếu."
-(Upgrade video player là một phần solution, không phải mục tiêu)
+"As a Seller, I want an unpaid checkout to expire on time so that 
+my casks go back to the market and another Buyer can buy them."
+(Job queue là một phần solution, không phải mục tiêu)
 
 ---
 
@@ -130,16 +131,16 @@ cần chính xác tuyệt đối).
 - Bổ sung context, constraint, tham khảo
 - Chia nhỏ phần unknown ra để cô lập rủi ro
 
-### Ví dụ (Digital School)
+### Ví dụ (Cask Exchange)
 
 ❌ **Vi phạm**:
-"As a học viên, I want AI gợi ý lộ trình học phù hợp với tôi" 
-(Không rõ AI dùng gì, data ở đâu, độ chính xác bao nhiêu)
+"As a Buyer, I want the system to suggest the best Bid price for me" 
+(Không rõ dựa trên data nào: LSP, ASP, MV hay order book, độ chính xác bao nhiêu)
 
 ✅ **Đạt chuẩn**:
-- Spike US-1: "Research giải pháp recommendation phù hợp với 10.000 học viên 
-  BA Zone, output: technical proposal trong 3 ngày"
-- US-2: "Implement learning path recommendation theo proposal đã chốt từ US-1"
+- Spike US-1: "Research cách gợi ý giá Bid từ LSP / ASP / MV hiện có, 
+  output: proposal trong 3 ngày"
+- US-2: "Implement suggested Bid price theo proposal đã chốt từ US-1"
 
 ---
 
@@ -162,24 +163,23 @@ Story đủ nhỏ để hoàn thành trong 1 sprint (thường 1-3 ngày làm vi
 
 ### Cách fix - Pattern split
 1. **Theo CRUD**: tách Create / Read / Update / Delete riêng
-2. **Theo persona**: Học viên / Mentor / Admin / HR Doanh nghiệp
-3. **Theo data type**: Text / Video / File đính kèm
+2. **Theo persona**: Buyer / Seller / Admin
+3. **Theo phương thức**: Card / Bank transfer
 4. **Theo business rule**: Happy path / Validation / Permission
-5. **Theo workflow step**: Đăng ký → Thanh toán → Enroll → Học
-6. **Theo platform**: Web / Mobile App / API
+5. **Theo workflow step**: Seller agreement → Deposit → Buyer agreement → Final payment → Ownership transfer
+6. **Theo platform**: Web app / Admin dashboard / API
 
-### Ví dụ (Digital School)
+### Ví dụ (Cask Exchange)
 
 ❌ **Vi phạm**:
-"As a học viên, I want to quản lý profile của tôi (xem, sửa tên, đổi mật khẩu, 
-upload avatar, xóa tài khoản)"
+"As a Buyer, I want to complete checkout (sign the agreement, pay the deposit, 
+pay the final invoice by card or bank transfer)"
 
 ✅ **Đạt chuẩn** - split thành:
-- US-1: Xem thông tin profile cá nhân
-- US-2: Cập nhật tên hiển thị
-- US-3: Đổi mật khẩu
-- US-4: Upload ảnh đại diện
-- US-5: Yêu cầu xóa tài khoản
+- US-1: Pay the deposit by card
+- US-2: Sign the buyer agreement
+- US-3: Pay the final invoice by card
+- US-4: Upload bank transfer proof for the final invoice
 
 ---
 
@@ -204,16 +204,16 @@ Story phải có AC rõ ràng, đo lường được, để QA viết test case 
 - Đo lường: số liệu, trạng thái, message text cụ thể
 - Định nghĩa "Done" rõ ràng
 
-### Ví dụ (Digital School)
+### Ví dụ (Cask Exchange)
 
 ❌ **Vi phạm**:
-"AC: Hệ thống phải phản hồi nhanh và hiển thị thông báo lỗi thân thiện"
+"AC: Trang deposit phải load nhanh và báo lỗi thân thiện khi thẻ bị từ chối"
 
 ✅ **Đạt chuẩn**:
-"Given học viên nhập sai mật khẩu 3 lần liên tiếp
-When học viên ấn Đăng nhập lần thứ 4
-Then hệ thống hiển thị thông báo 'Tài khoản bị tạm khóa 15 phút vì lý do bảo mật' trong vòng 2 giây
-And gửi email cảnh báo đến địa chỉ đã đăng ký"
+"Given the Buyer's Checkout Session is `pending` and the deposit deadline has not passed
+When the Buyer's card is declined
+Then the session stays `pending` and the Buyer can try again
+And no email is sent"
 
 ---
 
@@ -223,7 +223,7 @@ And gửi email cảnh báo đến địa chỉ đã đăng ký"
 |----------|----------------|
 | Independent | Story này có chạy độc lập được không? |
 | Negotiable | Có chỗ cho thảo luận, hay đã quá chi tiết? |
-| Valuable | Học viên/BA Zone được lợi gì cụ thể? |
+| Valuable | Buyer / Seller / Admin hoặc Cask Exchange được lợi gì cụ thể? |
 | Estimable | Dev ước lượng được effort không? |
 | Small | Hoàn thành trong 1 sprint không? |
 | Testable | QA viết được test case từ AC không? |

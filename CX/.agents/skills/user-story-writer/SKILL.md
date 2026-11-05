@@ -1,11 +1,11 @@
 ---
-name: user-story-ac-writer
+name: user-story-writer
 description: |
   Sinh User Story và Acceptance Criteria chuẩn INVEST + Given-When-Then 
   cho BA/PO. Skill enforce 6 tiêu chí INVEST (Independent, Negotiable, 
   Valuable, Estimable, Small, Testable) và format AC theo Gherkin syntax.
   Hỗ trợ 3 mode: viết mới từ feature description, refine US đang có,
-  bổ sung AC cho US đã viết.
+  bổ sung AC cho US đã viết. Đã chỉnh cho domain Cask Exchange.
   
   Dùng khi user nói: "viết user story", "viết US", "tạo user story", 
   "viết AC", "viết acceptance criteria", "tạo AC cho story", 
@@ -33,6 +33,17 @@ chất lượng cao, sẵn sàng cho dev estimate và QA viết test case.
 
 Được phát triển bởi **Phúc NT** trong khuôn khổ chương trình đào tạo 
 **Digital School** của **BA Zone** — cộng đồng BA/PO Việt Nam.
+Bản này đã được chỉnh ví dụ và checklist cho dự án **Cask Exchange**.
+
+## Domain: Cask Exchange
+Trước khi viết, dùng đúng thuật ngữ trong `docs/project-summary.md` (mục 2, 3, 4):
+- **Persona**: một account vừa mua vừa bán được. "Buyer" và "Seller" là vai trò trong 1 giao dịch, không phải loại account. Các persona chính: Buyer, Seller, Admin (ops team của client), System (matching, expiry, email).
+- **Tên gọi**: tên sản phẩm luôn là "Cask Exchange". Trong US/AC nói "vintage" (spec kỹ thuật mới dùng "Variant"). Tên hiển thị: `[Master Cask Name] [Vintage Year]`.
+- **Tiền**: GBP (£). Rule đã chốt (fee 5% + 5%, deposit 10% of Total, ngưỡng £30,000...) không được tự đổi. Nếu yêu cầu mâu thuẫn với rule thì ghi rõ conflict vào Notes.
+- **Quantity**: luôn nói rõ loại (target / filled / remaining / matchable), không ghi chung chung "quantity".
+- **Status**: dùng đúng status có sẵn (Bid/Ask: Active, Completed, Expired, Cancelled; Checkout session: `pending_seller`, `pending`, `buyer_signature`, `invoice_payment`, `invoice_submitted`, `invoice_paid`, `completed`, `cancelled`, `expired`).
+- **Vị trí trong core flow**: ghi story nằm ở đâu trên Browse -> Order -> Matching -> Checkout (5 bước) -> Payout.
+- **Chưa biết** thì ghi `[OPEN]` kèm người cần trả lời, không tự đoán.
 
 ## Workflow chuẩn
 
@@ -47,7 +58,7 @@ Nếu user paste content rõ ràng, tự suy luận mode và xác nhận lại 1
 
 ### Bước 2: Thu thập input bắt buộc
 Cần đủ 4 thông tin trước khi sinh, hỏi nếu thiếu:
-1. **Persona/User type**: Ai sẽ dùng tính năng? (Học viên, Mentor, Admin, Doanh nghiệp...)
+1. **Persona/User type**: Ai sẽ dùng tính năng? (Buyer, Seller, Admin, System...)
 2. **Goal**: User muốn làm gì?
 3. **Business value**: Tại sao cần tính năng này?
 4. **Context/Scope**: Tính năng nằm trong feature/module nào?
@@ -116,14 +127,14 @@ Trình bày theo format:
 
 ## Anti-patterns - KHÔNG làm những điều sau
 
-❌ **Persona generic**: "As a user" → ✅ "As a học viên Digital School 
-   đã đăng ký khóa học và xác thực email"
+❌ **Persona generic**: "As a user" → ✅ "As a Buyer who has completed 
+   KYC and has an Active Bid on this vintage"
    
-❌ **Goal vague**: "I want to manage profile" → ✅ "I want to update 
-   my email address"
+❌ **Goal vague**: "I want to manage my bids" → ✅ "I want to cancel 
+   the unmatched part of my Bid"
    
-❌ **Value lặp lại goal**: "So that I can manage profile" → ✅ "So that 
-   I receive notifications at correct address"
+❌ **Value lặp lại goal**: "So that I can cancel my bid" → ✅ "So that 
+   I stop buying more units while keeping the deal already in checkout"
    
 ❌ **AC mô tả UI**: "Then button turns blue" → ✅ "Then system displays 
    confirmation message"
@@ -148,7 +159,8 @@ Trình bày theo format:
 
 Pattern split phổ biến:
 - Theo **CRUD**: tách Create / Read / Update / Delete
-- Theo **persona**: tách Học viên / Mentor / Admin / Doanh nghiệp
+- Theo **persona**: tách Buyer / Seller / Admin
+- Theo **bước checkout**: Seller agreement / Deposit / Buyer agreement / Final payment / Ownership transfer
 - Theo **business rule**: tách Happy path / Validation / Permission
 - Theo **data type**: tách theo loại data xử lý
 
@@ -157,7 +169,8 @@ Pattern split phổ biến:
 - `templates/user-story-template.md` - template trống điền vào
 - `templates/ac-template.md` - template AC chuẩn Gherkin
 - `references/invest-criteria.md` - giải thích sâu INVEST
-- `references/examples.md` - 7 ví dụ mẫu cho EdTech & Digital School
+- `references/examples.md` - 6 ví dụ mẫu cho Cask Exchange
+- `docs/project-summary.md` (tính từ workspace root `CX/`) - thuật ngữ, status, rule đã chốt
 - `checklists/quality-checklist.md` - checklist self-review trước khi xuất
 
 ---

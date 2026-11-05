@@ -3,7 +3,8 @@
 > Skill phải tự kiểm tra theo checklist này trước khi xuất output cuối cùng.
 > Nếu fail bất kỳ mục nào → fix trước khi trả về cho user.
 >
-> Biên soạn bởi **Phúc NT** · BA Zone · Digital School
+> Biên soạn bởi **Phúc NT** · BA Zone · Digital School  
+> Đã chỉnh cho dự án Cask Exchange
 
 ---
 
@@ -11,19 +12,19 @@
 
 ### Persona (As a...)
 - [ ] Persona cụ thể, không dùng "user" chung
-- [ ] Có mô tả trạng thái/điều kiện kèm theo (đã đăng ký, đã xác thực email, đang theo học...)
-- [ ] Phân biệt được với các persona khác trong sản phẩm (học viên / mentor / admin / HR doanh nghiệp)
+- [ ] Có mô tả trạng thái/điều kiện kèm theo (đã KYC, đã connect Stripe, đang có Bid Active, đang ở bước checkout nào...)
+- [ ] Phân biệt được với các persona khác trong sản phẩm (Buyer / Seller / Admin / System). Nhớ: Buyer/Seller là vai trò trong 1 giao dịch, không phải loại account
 
 ### Goal (I want to...)
 - [ ] Mô tả hành động cụ thể, không mơ hồ
-- [ ] Dùng động từ rõ ràng (đặt lịch mentor, tải chứng chỉ, thanh toán khóa học)
+- [ ] Dùng động từ rõ ràng (place a Bid, pay the deposit, upload bank transfer proof)
 - [ ] Có thể đo lường khi nào "đã làm xong"
 - [ ] Không chứa từ "manage", "handle" chung chung
 
 ### Business Value (So that...)
 - [ ] Khác biệt rõ với phần "I want to"
 - [ ] Mô tả outcome cho user/business, không phải feature
-- [ ] Trả lời được câu "Nếu không làm thì học viên / BA Zone mất gì?"
+- [ ] Trả lời được câu "Nếu không làm thì Buyer / Seller / Admin hoặc Cask Exchange mất gì?"
 - [ ] Tránh lặp lại nội dung của Goal
 
 ---
@@ -60,12 +61,13 @@
 - [ ] Có ít nhất 1 happy path
 - [ ] Có ít nhất 1 edge case (boundary, race condition, timeout, offline...)
 - [ ] Có ít nhất 1 negative path (lỗi, validation fail, permission denied)
-- [ ] Edge case mang tính domain-specific của EdTech (hết quota mentor, điểm không đủ, license doanh nghiệp...)
+- [ ] Edge case đặc thù Cask Exchange: 0, null, cancel, expire, partial match, 1:N checkout session, hai user thao tác cùng lúc (chọn case nào phù hợp)
 
 ### Đo lường được
-- [ ] Có số liệu cụ thể khi cần (thời gian xử lý, % hoàn thành, số license)
+- [ ] Có số liệu cụ thể khi cần (số tiền £, fee, deadline, số lượng)
+- [ ] Nói rõ loại quantity (target / filled / remaining / matchable), không ghi chung chung "quantity"
 - [ ] Có message text cụ thể (không "thông báo lỗi" chung chung)
-- [ ] Có trạng thái rõ ràng (Pending/Enrolled/Completed/Failed)
+- [ ] Có trạng thái rõ ràng, dùng đúng status trong `docs/project-summary.md` mục 3.3 (ví dụ Bid Active / Cancelled, session `pending` / `expired`)
 
 ### Tránh anti-patterns
 - [ ] Không chứa từ mơ hồ: "nhanh", "đẹp", "user-friendly", "intuitive", "phù hợp"
@@ -75,7 +77,17 @@
 
 ---
 
-## ✅ Phần 4: Output Format
+## ✅ Phần 4: Domain Cask Exchange
+
+- [ ] Tên sản phẩm là "Cask Exchange" (không "CaskX")
+- [ ] Dùng "vintage" trong US/AC, tên hiển thị `[Master Cask Name] [Vintage Year]`
+- [ ] Không mâu thuẫn rule đã chốt (`docs/project-summary.md` mục 4). Nếu có thì ghi conflict vào Notes
+- [ ] Ghi story nằm ở đâu trên core flow
+- [ ] Chỗ chưa biết đã ghi `[OPEN]` kèm người cần trả lời
+
+---
+
+## ✅ Phần 5: Output Format
 
 - [ ] Có ID story rõ ràng (US-FEATURE-001 format)
 - [ ] Có metadata: Epic, Priority, Estimate (nếu có thông tin)
@@ -85,7 +97,7 @@
 
 ---
 
-## ✅ Phần 5: Sanity Check tổng thể
+## ✅ Phần 6: Sanity Check tổng thể
 
 Trước khi xuất, đọc lại 1 lần và tự hỏi:
 
